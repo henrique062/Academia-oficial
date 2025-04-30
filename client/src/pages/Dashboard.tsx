@@ -62,7 +62,7 @@ export default function Dashboard() {
     {
       accessorKey: "nome",
       header: "Nome",
-      cell: ({ row }: any) => <span className="font-medium">{row.original.nome}</span>,
+      cell: ({ row }: any) => <span className="text-primary-foreground font-medium">{row.original.nome}</span>,
     },
     {
       accessorKey: "turma",
