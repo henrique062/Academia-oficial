@@ -1,0 +1,111 @@
+Quero construir uma aplicação de dashboard de alunos para o curso Tripulante. Ela deve ser dividida em frontend e backend (full stack):
+
+**Frontend:**
+- Use React, Tailwind CSS e o Shadcn UI.
+- Crie uma página principal mostrando a lista de alunos cadastrados (dashboard).
+- Implemente uma página/formulário para cadastro e edição de alunos, com todos os seguintes campos (pode ser em seções ou abas):
+  - Nome, Documento, Email, País, Telefone Padronizado, Link para WhatsApp, Turma, Data de Confirmação da Compra, Alerta Vencimento (30 dias antes), Período de Acesso, Situação Financeira, Observação, Data de Vencimento, Pagamentos mensais de Dezembro/2024 até Dezembro seguinte
+  - É Tripulante?, Está Pronto?, Certificado?, Tem STCW?, Status Vacina, Nível Autoavaliação, Fez Crew Call?, Data Crew Call, Nome Entrevistador, Nível Nivelamento, Considerações, Perfil, Está na Comunidade?, Participação, Instagram, Close Friends?, Postou CV, Análise CV, Datas e Responsáveis, Comentários, Entrevista Marcada?, Empresa, Cargo, Aprovado?, Data Embarque, Salário, Coleta de Prova, Tipo de Prova, Link do Arquivo, Contatos, Motivos, Quem, etc. (todos os campos listados acima).
+- O cadastro pode ser feito manualmente ou via integração (API POST).
+- Mostre e documente a API na tela de "Integrações", incluindo um exemplo de request para cadastrar e atualizar alunos via API.
+
+**Backend:**
+- Use Node.js (com Express).
+- Crie endpoints REST para listar, cadastrar, editar, deletar alunos.
+- Aceite dados completos dos alunos e suporte a integração por API POST.
+- Deixe preparado o suporte para autenticação (JWT).
+- Use um banco de dados supabase
+
+**Documentação:**
+- Na página de integrações, mostre um exemplo de endpoint da API de cadastro e explicação dos campos.
+```
+
+---
+
+## Blueprint da Aplicação
+
+### Estrutura de Pastas
+
+```
+/dashboard-tripulante
+  /backend         # Node.js + Express + DB
+  /frontend        # React + Tailwind + Shadcn UI
+  README.md
+```
+
+---
+
+### Backend (Node.js + Express)
+
+- `backend/`
+  - `index.js` – Inicializa o Express, define rotas.
+  - `routes/alunos.js` – Endpoints para alunos (CRUD).
+  - `models/Aluno.js` – Modelo de dados dos alunos.
+  - `config/db.js` – Configuração do banco de dados.
+  - `middleware/auth.js` – (Opcional) Middleware de autenticação JWT.
+
+**Principais Rotas:**
+- `GET /alunos` – Lista todos os alunos.
+- `POST /alunos` – Cadastra novo aluno.
+- `PUT /alunos/:id` – Edita aluno.
+- `DELETE /alunos/:id` – Remove aluno.
+
+---
+
+### Frontend (React + Tailwind CSS + Shadcn UI)
+
+- `frontend/`
+  - `src/App.jsx`
+  - `src/pages/Dashboard.jsx` – Lista alunos
+  - `src/pages/CadastroAluno.jsx` – Formulário
+  - `src/pages/Integracoes.jsx` – Documentação da API
+  - `src/components/AlunoForm.jsx` – Componente de formulário
+  - `src/components/AlunoTable.jsx` – Tabela de exibição
+  - `src/utils/api.js` – Funções para consumir API
+  - `tailwind.config.js` – Configuração do Tailwind
+  - `shadcn.config.js` – Configuração do Shadcn
+
+---
+
+### Integrações / Documentação da API
+
+No frontend, na página `/integracoes`, inclua uma tabela ou bloco de código com exemplos:
+
+```json
+POST /alunos
+Content-Type: application/json
+
+{
+  "nome": "Fulano de Tal",
+  "documento": "1234567",
+  "email": "fulano@email.com",
+  "pais": "Brasil",
+  "telefone": "+55 11 91234-5678",
+  "whatsapp": "https://wa.me/5511912345678",
+  "turma": "Janeiro/2024",
+  "data_confirmacao": "2024-01-10",
+  ...
+}
+```
+Inclua a lista dos campos obrigatórios/opcionais.
+
+---
+
+### Sugestão de Telas
+
+1. **Dashboard:** Tabela com alunos, filtros por turma, busca, botões para editar/excluir/cadastrar.
+2. **Cadastro/Editar:** Formulário dividido em seções/tabs para campos obrigatórios.
+3. **Integrações:** Documentação visual da API, exemplos de uso via cURL ou Postman.
+
+---
+
+### Pontos de Atenção
+
+- Use Tailwind + Shadcn para um visual moderno e componentes prontos.
+- Considere usar Zod ou Yup para validação dos campos no frontend.
+- Implemente feedback de sucesso/erro ao cadastrar/editar.
+- Deixe fácil para crescer para outras integrações (exemplo: importar CSV, exportar dados, integração n8n).
+
+---
+
+Se quiser o **template inicial do projeto** (comando para criar as pastas, instalar deps, etc.) me avise que gero pronto para copiar e colar no Replit ou outro ambiente!
