@@ -47,7 +47,7 @@ export function formatCurrency(value: number | undefined | null): string {
 }
 
 // Get situação financeira badge color
-export function getSituacaoFinanceiraColor(situacao: string): string {
+export function getSituacaoFinanceiraColor(situacao: string): "red" | "green" | "yellow" | "gray" | "blue" | "purple" {
   switch (situacao?.toLowerCase()) {
     case 'em dia':
       return 'green';
@@ -61,7 +61,7 @@ export function getSituacaoFinanceiraColor(situacao: string): string {
 }
 
 // Get boolean badge color (Sim/Não)
-export function getBooleanBadgeColor(value: boolean | undefined | null): string {
+export function getBooleanBadgeColor(value: boolean | undefined | null): "red" | "green" | "yellow" | "gray" | "blue" | "purple" {
   if (value === true) return 'green';
   return 'gray';
 }
