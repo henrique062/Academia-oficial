@@ -141,19 +141,19 @@ export default function AlunoForm({ defaultValues, isEditing = false, onSuccess 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <Card>
+        <Card className="bg-white">
           <CardContent className="p-6">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
-                <TabsTrigger value="dados-pessoais">Dados Pessoais</TabsTrigger>
-                <TabsTrigger value="dados-academicos">Dados Acadêmicos</TabsTrigger>
-                <TabsTrigger value="financeiro">Financeiro</TabsTrigger>
-                <TabsTrigger value="profissional">Profissional</TabsTrigger>
-                <TabsTrigger value="social">Social</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-5 bg-gray-100">
+                <TabsTrigger value="dados-pessoais" className="text-gray-900 data-[state=active]:bg-white">Dados Pessoais</TabsTrigger>
+                <TabsTrigger value="dados-academicos" className="text-gray-900 data-[state=active]:bg-white">Dados Acadêmicos</TabsTrigger>
+                <TabsTrigger value="financeiro" className="text-gray-900 data-[state=active]:bg-white">Financeiro</TabsTrigger>
+                <TabsTrigger value="profissional" className="text-gray-900 data-[state=active]:bg-white">Profissional</TabsTrigger>
+                <TabsTrigger value="social" className="text-gray-900 data-[state=active]:bg-white">Social</TabsTrigger>
               </TabsList>
               
               {/* Dados Pessoais */}
-              <TabsContent value="dados-pessoais" className="mt-6">
+              <TabsContent value="dados-pessoais" className="mt-6 bg-white">
                 <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                   <FormField
                     control={form.control}
@@ -267,7 +267,7 @@ export default function AlunoForm({ defaultValues, isEditing = false, onSuccess 
               </TabsContent>
               
               {/* Dados Acadêmicos */}
-              <TabsContent value="dados-academicos" className="mt-6">
+              <TabsContent value="dados-academicos" className="mt-6 bg-white">
                 <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                   <FormField
                     control={form.control}
@@ -526,7 +526,7 @@ export default function AlunoForm({ defaultValues, isEditing = false, onSuccess 
               </TabsContent>
               
               {/* Financeiro */}
-              <TabsContent value="financeiro" className="mt-6">
+              <TabsContent value="financeiro" className="mt-6 bg-white">
                 <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                   <FormField
                     control={form.control}
@@ -707,7 +707,7 @@ export default function AlunoForm({ defaultValues, isEditing = false, onSuccess 
               </TabsContent>
               
               {/* Profissional */}
-              <TabsContent value="profissional" className="mt-6">
+              <TabsContent value="profissional" className="mt-6 bg-white">
                 <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                   <FormField
                     control={form.control}
@@ -969,7 +969,7 @@ export default function AlunoForm({ defaultValues, isEditing = false, onSuccess 
               </TabsContent>
               
               {/* Social */}
-              <TabsContent value="social" className="mt-6">
+              <TabsContent value="social" className="mt-6 bg-white">
                 <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                   <FormField
                     control={form.control}

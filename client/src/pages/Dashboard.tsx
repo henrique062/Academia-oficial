@@ -211,7 +211,7 @@ export default function Dashboard() {
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
             <Link href="/cadastro">
-              <Button className="bg-primary-600 hover:bg-primary-700 shadow-sm transition-colors duration-150">
+              <Button className="bg-primary-400 hover:bg-primary-500 shadow-sm transition-colors duration-150">
                 <UserPlus className="mr-2 h-4 w-4" />
                 Novo Aluno
               </Button>

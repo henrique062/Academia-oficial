@@ -189,7 +189,7 @@ export function DataTable<TData, TValue>({
                     <Button
                       variant={currentPage === page ? "default" : "outline"}
                       size="sm"
-                      className={`${currentPage === page ? "bg-primary-600 text-white" : "text-gray-900"} rounded-none`}
+                      className={`${currentPage === page ? "bg-primary-400 text-white" : "text-gray-900"} rounded-none`}
                       onClick={() => handlePageChange(page)}
                     >
                       {page}
