@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { DataTable } from "@/components/ui/data-table";
@@ -28,15 +28,20 @@ export default function Alunos() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedAluno, setSelectedAluno] = useState<Aluno | null>(null);
   
+  // Create a ref for the search timeout
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
   // Handle search with debounce
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
     
     // Clear any previous timeout
-    clearTimeout(window.searchTimeout);
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
     
     // Set a new timeout
-    window.searchTimeout = setTimeout(() => {
+    searchTimeoutRef.current = setTimeout(() => {
       setDebouncedSearch(e.target.value);
       setPage(1); // Reset to first page on new search
     }, 500);
