@@ -121,24 +121,24 @@ export default function Dashboard() {
     <div className="px-4 sm:px-6 lg:px-8 py-8">
       {/* Page title */}
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Dashboard do Curso Tripulante</h1>
-        <p className="mt-1 text-sm text-gray-500">Gerencie todos os alunos e informações do programa de formação</p>
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard do Curso Tripulante</h1>
+        <p className="mt-1 text-sm text-gray-600">Gerencie todos os alunos e informações do programa de formação</p>
       </div>
 
       {/* Stats cards */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         {/* Total Alunos */}
-        <Card>
-          <CardContent className="p-5">
+        <Card className="border border-gray-200 shadow-sm overflow-hidden">
+          <CardContent className="p-5 bg-gradient-to-br from-white to-gray-50">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 p-2 bg-primary-50 rounded-full">
                 <Users className="h-6 w-6 text-primary-600" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Total de Alunos</dt>
+                  <dt className="text-sm font-medium text-gray-600 truncate">Total de Alunos</dt>
                   <dd>
-                    <div className="text-lg font-medium text-gray-900">
+                    <div className="text-2xl font-semibold text-gray-900">
                       {stats?.total || '0'}
                     </div>
                   </dd>
@@ -146,9 +146,9 @@ export default function Dashboard() {
               </div>
             </div>
           </CardContent>
-          <div className="bg-gray-50 px-5 py-3 rounded-b-lg">
+          <div className="bg-primary-50 px-5 py-3 border-t border-primary-100">
             <div className="text-sm">
-              <Link href="/alunos" className="font-medium text-primary-600 hover:text-primary-500">
+              <Link href="/alunos" className="font-medium text-primary-600 hover:text-primary-500 transition-colors duration-150">
                 Ver todos
               </Link>
             </div>
@@ -156,17 +156,17 @@ export default function Dashboard() {
         </Card>
 
         {/* Confirmados */}
-        <Card>
-          <CardContent className="p-5">
+        <Card className="border border-gray-200 shadow-sm overflow-hidden">
+          <CardContent className="p-5 bg-gradient-to-br from-white to-green-50">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 p-2 bg-green-50 rounded-full">
                 <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Alunos Confirmados</dt>
+                  <dt className="text-sm font-medium text-gray-600 truncate">Alunos Confirmados</dt>
                   <dd>
-                    <div className="text-lg font-medium text-gray-900">
+                    <div className="text-2xl font-semibold text-gray-900">
                       {stats?.confirmados || '0'}
                     </div>
                   </dd>
@@ -174,9 +174,9 @@ export default function Dashboard() {
               </div>
             </div>
           </CardContent>
-          <div className="bg-gray-50 px-5 py-3 rounded-b-lg">
+          <div className="bg-green-50 px-5 py-3 border-t border-green-100">
             <div className="text-sm">
-              <Link href="/alunos" className="font-medium text-primary-600 hover:text-primary-500">
+              <Link href="/alunos" className="font-medium text-green-600 hover:text-green-500 transition-colors duration-150">
                 Ver detalhes
               </Link>
             </div>
@@ -184,17 +184,17 @@ export default function Dashboard() {
         </Card>
 
         {/* Pendentes */}
-        <Card>
-          <CardContent className="p-5">
+        <Card className="border border-gray-200 shadow-sm overflow-hidden">
+          <CardContent className="p-5 bg-gradient-to-br from-white to-amber-50">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 p-2 bg-amber-50 rounded-full">
                 <Clock className="h-6 w-6 text-amber-600" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Alunos Pendentes</dt>
+                  <dt className="text-sm font-medium text-gray-600 truncate">Alunos Pendentes</dt>
                   <dd>
-                    <div className="text-lg font-medium text-gray-900">
+                    <div className="text-2xl font-semibold text-gray-900">
                       {stats?.pendentes || '0'}
                     </div>
                   </dd>
@@ -202,9 +202,9 @@ export default function Dashboard() {
               </div>
             </div>
           </CardContent>
-          <div className="bg-gray-50 px-5 py-3 rounded-b-lg">
+          <div className="bg-amber-50 px-5 py-3 border-t border-amber-100">
             <div className="text-sm">
-              <Link href="/alunos" className="font-medium text-primary-600 hover:text-primary-500">
+              <Link href="/alunos" className="font-medium text-amber-600 hover:text-amber-500 transition-colors duration-150">
                 Ver pendentes
               </Link>
             </div>
@@ -212,17 +212,17 @@ export default function Dashboard() {
         </Card>
 
         {/* Certificados */}
-        <Card>
-          <CardContent className="p-5">
+        <Card className="border border-gray-200 shadow-sm overflow-hidden">
+          <CardContent className="p-5 bg-gradient-to-br from-white to-blue-50">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <Award className="h-6 w-6 text-amber-500" />
+              <div className="flex-shrink-0 p-2 bg-blue-50 rounded-full">
+                <Award className="h-6 w-6 text-blue-600" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Certificados Emitidos</dt>
+                  <dt className="text-sm font-medium text-gray-600 truncate">Certificados Emitidos</dt>
                   <dd>
-                    <div className="text-lg font-medium text-gray-900">
+                    <div className="text-2xl font-semibold text-gray-900">
                       {stats?.certificados || '0'}
                     </div>
                   </dd>
@@ -230,9 +230,9 @@ export default function Dashboard() {
               </div>
             </div>
           </CardContent>
-          <div className="bg-gray-50 px-5 py-3 rounded-b-lg">
+          <div className="bg-blue-50 px-5 py-3 border-t border-blue-100">
             <div className="text-sm">
-              <Link href="/alunos" className="font-medium text-primary-600 hover:text-primary-500">
+              <Link href="/alunos" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-150">
                 Ver certificados
               </Link>
             </div>
@@ -241,15 +241,15 @@ export default function Dashboard() {
       </div>
 
       {/* Table section */}
-      <div className="mt-8">
-        <div className="sm:flex sm:items-center mb-4">
+      <div className="mt-8 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <div className="sm:flex sm:items-center mb-6">
           <div className="sm:flex-auto">
-            <h2 className="text-xl font-semibold text-gray-900">Alunos Recentes</h2>
-            <p className="mt-2 text-sm text-gray-700">Lista dos últimos alunos cadastrados no sistema.</p>
+            <h2 className="text-xl font-bold text-gray-900">Alunos Recentes</h2>
+            <p className="mt-2 text-sm text-gray-600">Lista dos últimos alunos cadastrados no sistema.</p>
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
             <Link href="/cadastro">
-              <Button>
+              <Button className="bg-primary-600 hover:bg-primary-700 shadow-sm transition-colors duration-150">
                 <UserPlus className="mr-2 h-4 w-4" />
                 Novo Aluno
               </Button>

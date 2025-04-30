@@ -29,7 +29,7 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <div className="min-h-full">
+    <div className="min-h-screen bg-gray-50">
       <div className="flex h-full">
         {/* Sidebar - desktop */}
         <Sidebar mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
@@ -37,13 +37,13 @@ export default function Layout({ children }: LayoutProps) {
         {/* Mobile sidebar overlay */}
         {mobileMenuOpen && (
           <div 
-            className="fixed inset-0 z-30 bg-gray-600 bg-opacity-75 lg:hidden"
+            className="fixed inset-0 z-30 bg-gray-900 bg-opacity-75 backdrop-blur-sm lg:hidden"
             onClick={() => setMobileMenuOpen(false)}
           />
         )}
         
         {/* Main content */}
-        <div className="lg:pl-72 flex flex-col w-full">
+        <div className="lg:pl-72 flex flex-col w-full min-h-screen">
           <Header 
             pageTitle={getPageTitle()} 
             mobileMenuOpen={mobileMenuOpen} 
@@ -51,7 +51,7 @@ export default function Layout({ children }: LayoutProps) {
           />
           
           {/* Dashboard content */}
-          <main>
+          <main className="flex-1 bg-gray-50">
             {children}
           </main>
         </div>

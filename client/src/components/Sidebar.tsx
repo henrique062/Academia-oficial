@@ -22,7 +22,7 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }: SidebarPr
     <>
       {/* Desktop sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-primary-950 px-6">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-primary-900 shadow-xl px-6 border-r border-primary-800">
           <div className="flex h-20 shrink-0 items-center">
             <Link href="/" className="flex items-center">
               <div className="flex items-center gap-2">
@@ -41,24 +41,29 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }: SidebarPr
                         href={item.href}
                         className={cn(
                           item.current
-                            ? "bg-primary-800 text-white"
-                            : "text-primary-200 hover:bg-primary-800 hover:text-white",
-                          "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
+                            ? "bg-primary-700 text-white shadow-sm"
+                            : "text-primary-100 hover:bg-primary-800 hover:text-white",
+                          "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 transition-colors duration-150"
                         )}
                       >
-                        <item.icon className="h-6 w-6 shrink-0 text-primary-200" />
+                        <item.icon 
+                          className={cn(
+                            "h-6 w-6 shrink-0",
+                            item.current ? "text-primary-100" : "text-primary-300 group-hover:text-primary-100 transition-colors duration-150"
+                          )} 
+                        />
                         {item.name}
                       </Link>
                     </li>
                   ))}
                 </ul>
               </li>
-              <li className="mt-auto">
+              <li className="mt-auto pb-6">
                 <a
                   href="#"
-                  className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-primary-200 hover:bg-primary-800 hover:text-white"
+                  className="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-primary-100 hover:bg-primary-800 hover:text-white transition-colors duration-150"
                 >
-                  <LogOut className="h-6 w-6 shrink-0 text-primary-200" />
+                  <LogOut className="h-6 w-6 shrink-0 text-primary-300 group-hover:text-primary-100 transition-colors duration-150" />
                   Sair
                 </a>
               </li>
@@ -70,7 +75,7 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }: SidebarPr
       {/* Mobile sidebar */}
       <div 
         className={cn(
-          "fixed inset-y-0 z-50 flex w-72 flex-col bg-primary-950 lg:hidden transition-transform duration-300 ease-in-out", 
+          "fixed inset-y-0 z-50 flex w-72 flex-col bg-primary-900 shadow-xl lg:hidden transition-transform duration-300 ease-in-out border-r border-primary-800", 
           mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -93,25 +98,30 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }: SidebarPr
                         href={item.href}
                         className={cn(
                           item.current
-                            ? "bg-primary-800 text-white"
-                            : "text-primary-200 hover:bg-primary-800 hover:text-white",
-                          "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
+                            ? "bg-primary-700 text-white shadow-sm"
+                            : "text-primary-100 hover:bg-primary-800 hover:text-white",
+                          "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 transition-colors duration-150"
                         )}
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        <item.icon className="h-6 w-6 shrink-0 text-primary-200" />
+                        <item.icon 
+                          className={cn(
+                            "h-6 w-6 shrink-0",
+                            item.current ? "text-primary-100" : "text-primary-300 group-hover:text-primary-100 transition-colors duration-150"
+                          )} 
+                        />
                         {item.name}
                       </Link>
                     </li>
                   ))}
                 </ul>
               </li>
-              <li className="mt-auto">
+              <li className="mt-auto pb-6">
                 <a
                   href="#"
-                  className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-primary-200 hover:bg-primary-800 hover:text-white"
+                  className="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-primary-100 hover:bg-primary-800 hover:text-white transition-colors duration-150"
                 >
-                  <LogOut className="h-6 w-6 shrink-0 text-primary-200" />
+                  <LogOut className="h-6 w-6 shrink-0 text-primary-300 group-hover:text-primary-100 transition-colors duration-150" />
                   Sair
                 </a>
               </li>
