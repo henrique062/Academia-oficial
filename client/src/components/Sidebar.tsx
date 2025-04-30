@@ -59,13 +59,13 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }: SidebarPr
                 </ul>
               </li>
               <li className="mt-auto pb-6">
-                <a
-                  href="#"
-                  className="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors duration-150"
+                <button
+                  type="button"
+                  className="group flex w-full gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors duration-150"
                 >
                   <LogOut className="h-6 w-6 shrink-0 text-muted-foreground group-hover:text-accent-foreground transition-colors duration-150" />
                   Sair
-                </a>
+                </button>
               </li>
             </ul>
           </nav>
@@ -117,13 +117,13 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }: SidebarPr
                 </ul>
               </li>
               <li className="mt-auto pb-6">
-                <a
-                  href="#"
-                  className="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors duration-150"
+                <button
+                  type="button"
+                  className="group flex w-full gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors duration-150"
                 >
                   <LogOut className="h-6 w-6 shrink-0 text-muted-foreground group-hover:text-accent-foreground transition-colors duration-150" />
                   Sair
-                </a>
+                </button>
               </li>
             </ul>
           </nav>
