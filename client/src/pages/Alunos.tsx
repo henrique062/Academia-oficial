@@ -188,7 +188,7 @@ export default function Alunos() {
                   <SelectValue placeholder="Todas as turmas" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas as turmas</SelectItem>
+                  <SelectItem value="todas">Todas as turmas</SelectItem>
                   <SelectItem value="Janeiro/2024">Janeiro/2024</SelectItem>
                   <SelectItem value="Fevereiro/2024">Fevereiro/2024</SelectItem>
                   <SelectItem value="Março/2024">Março/2024</SelectItem>
@@ -207,7 +207,7 @@ export default function Alunos() {
                   <SelectValue placeholder="Todas" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas</SelectItem>
+                  <SelectItem value="todas">Todas</SelectItem>
                   <SelectItem value="Em dia">Em dia</SelectItem>
                   <SelectItem value="Pendente">Pendente</SelectItem>
                   <SelectItem value="Atrasado">Atrasado</SelectItem>
