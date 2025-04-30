@@ -1,6 +1,7 @@
 import { alunos, type Aluno, type InsertAluno, users, type User, type InsertUser } from "@shared/schema";
-import { db } from "./db";
-import { eq, like, desc, and, or } from "drizzle-orm";
+import { db, supabase } from "./db";
+import { eq, like, desc, and, or, sql } from "drizzle-orm";
+import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 export interface IStorage {
   // User operations
@@ -19,111 +20,163 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   // User operations
   async getUser(id: number): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user || undefined;
+    // Using Supabase
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', id)
+      .single();
+      
+    if (error) {
+      console.error('Error fetching user:', error);
+      return undefined;
+    }
+    
+    return data as User || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
-    return user || undefined;
+    // Using Supabase
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', username)
+      .single();
+      
+    if (error && error.code !== 'PGRST116') { // PGRST116 is "No rows returned"
+      console.error('Error fetching user by username:', error);
+      return undefined;
+    }
+    
+    return data as User || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(insertUser)
-      .returning();
-    return user;
+    // Using Supabase
+    const { data, error } = await supabase
+      .from('users')
+      .insert(insertUser)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error creating user:', error);
+      throw new Error(`Failed to create user: ${error.message}`);
+    }
+    
+    return data as User;
   }
   
   // Alunos operations
-  async getAlunos(page = 1, pageSize = 10, search = '', filters: Record<string, any> = {}): Promise<{ data: Aluno[], total: number }> {
+  async getAlunos(page = a1, pageSize = 10, search = '', filters: Record<string, any> = {}): Promise<{ data: Aluno[], total: number }> {
     const offset = (page - 1) * pageSize;
     
-    let query = db.select().from(alunos);
+    // Start Supabase query
+    let query = supabase
+      .from('alunos')
+      .select('*', { count: 'exact' });
     
     // Apply search if provided
     if (search) {
-      query = query.where(
-        or(
-          like(alunos.nome, `%${search}%`),
-          like(alunos.email, `%${search}%`),
-          like(alunos.documento, `%${search}%`)
-        )
-      );
+      query = query.or(`nome.ilike.%${search}%,email.ilike.%${search}%,documento.ilike.%${search}%`);
     }
     
     // Apply filters if provided
     if (filters) {
-      const conditions = [];
-      
       if (filters.turma) {
-        conditions.push(eq(alunos.turma, filters.turma));
+        query = query.eq('turma', filters.turma);
       }
       
       if (filters.situacao_financeira) {
-        conditions.push(eq(alunos.situacao_financeira, filters.situacao_financeira));
+        query = query.eq('situacao_financeira', filters.situacao_financeira);
       }
       
       if (filters.tripulante !== undefined) {
-        conditions.push(eq(alunos.tripulante, filters.tripulante === 'true'));
+        query = query.eq('tripulante', filters.tripulante === 'true');
       }
       
       if (filters.certificado !== undefined) {
-        conditions.push(eq(alunos.certificado, filters.certificado === 'true'));
-      }
-      
-      if (conditions.length > 0) {
-        query = query.where(and(...conditions));
+        query = query.eq('certificado', filters.certificado === 'true');
       }
     }
     
-    // Get total count for pagination
-    const countResult = await db.select({ count: alunos.id }).from(alunos);
-    const total = countResult.length;
+    // Add pagination and ordering
+    const { data, error, count } = await query
+      .order('created_at', { ascending: false })
+      .range(offset, offset + pageSize - 1);
     
-    // Get data with pagination
-    const data = await query
-      .orderBy(desc(alunos.created_at))
-      .limit(pageSize)
-      .offset(offset);
+    if (error) {
+      console.error('Error fetching alunos:', error);
+      return { data: [], total: 0 };
+    }
     
-    return { data, total };
+    return { 
+      data: data as Aluno[],
+      total: count || 0
+    };
   }
   
   async getAluno(id: number): Promise<Aluno | undefined> {
-    const [aluno] = await db.select().from(alunos).where(eq(alunos.id, id));
-    return aluno || undefined;
+    const { data, error } = await supabase
+      .from('alunos')
+      .select('*')
+      .eq('id', id)
+      .single();
+      
+    if (error) {
+      console.error('Error fetching aluno:', error);
+      return undefined;
+    }
+    
+    return data as Aluno || undefined;
   }
   
   async createAluno(insertAluno: InsertAluno): Promise<Aluno> {
-    const [aluno] = await db
-      .insert(alunos)
-      .values(insertAluno)
-      .returning();
-    return aluno;
+    const { data, error } = await supabase
+      .from('alunos')
+      .insert(insertAluno)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error creating aluno:', error);
+      throw new Error(`Failed to create aluno: ${error.message}`);
+    }
+    
+    return data as Aluno;
   }
   
   async updateAluno(id: number, updateData: Partial<InsertAluno>): Promise<Aluno | undefined> {
-    const [updated] = await db
-      .update(alunos)
-      .set({
+    const { data, error } = await supabase
+      .from('alunos')
+      .update({
         ...updateData,
-        updated_at: new Date()
+        updated_at: new Date().toISOString()
       })
-      .where(eq(alunos.id, id))
-      .returning();
+      .eq('id', id)
+      .select()
+      .single();
     
-    return updated;
+    if (error) {
+      console.error('Error updating aluno:', error);
+      return undefined;
+    }
+    
+    return data as Aluno;
   }
   
   async deleteAluno(id: number): Promise<boolean> {
-    const result = await db
-      .delete(alunos)
-      .where(eq(alunos.id, id))
-      .returning({ id: alunos.id });
+    const { error } = await supabase
+      .from('alunos')
+      .delete()
+      .eq('id', id);
     
-    return result.length > 0;
+    if (error) {
+      console.error('Error deleting aluno:', error);
+      return false;
+    }
+    
+    return true;
   }
 }
 
