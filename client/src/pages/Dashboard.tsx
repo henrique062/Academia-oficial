@@ -5,7 +5,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/StatusBadge";
 import { formatBoolean, getSituacaoFinanceiraColor } from "@/lib/utils";
-import { Edit, Trash2, UserPlus, Users, CheckCircle, Clock, Award } from "lucide-react";
+import { Edit, Trash2, UserPlus, Users, CheckCircle, Clock } from "lucide-react";
 import { useState } from "react";
 import { Aluno } from "@shared/schema";
 import DeleteAlunoDialog from "@/components/DeleteAlunoDialog";
@@ -43,9 +43,8 @@ export default function Dashboard() {
       const total = result.data.length;
       const confirmados = result.data.filter((aluno: Aluno) => aluno.situacao_financeira === 'Em dia').length;
       const pendentes = result.data.filter((aluno: Aluno) => aluno.situacao_financeira === 'Pendente').length;
-      const certificados = result.data.filter((aluno: Aluno) => aluno.certificado === true).length;
       
-      return { total, confirmados, pendentes, certificados };
+      return { total, confirmados, pendentes };
     }
   });
   
@@ -88,15 +87,6 @@ export default function Dashboard() {
       ),
     },
     {
-      accessorKey: "certificado",
-      header: "Certificado",
-      cell: ({ row }: any) => (
-        <StatusBadge color={row.original.certificado ? "green" : "gray"}>
-          {formatBoolean(row.original.certificado)}
-        </StatusBadge>
-      ),
-    },
-    {
       id: "actions",
       cell: ({ row }: any) => (
         <div className="flex justify-end gap-2">
@@ -118,7 +108,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-8">
+    <div className="px-4 sm:px-6 lg:px-8 py-8 bg-white">
       {/* Page title */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Dashboard do Curso Tripulante</h1>
@@ -126,7 +116,7 @@ export default function Dashboard() {
       </div>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 mb-8">
         {/* Total Alunos */}
         <Card className="border border-gray-200 shadow-sm overflow-hidden">
           <CardContent className="p-5 bg-gradient-to-br from-white to-gray-50">
@@ -146,9 +136,9 @@ export default function Dashboard() {
               </div>
             </div>
           </CardContent>
-          <div className="bg-primary-50 px-5 py-3 border-t border-primary-100">
+          <div className="bg-white px-5 py-3 border-t border-primary-100">
             <div className="text-sm">
-              <Link href="/alunos" className="font-medium text-primary-600 hover:text-primary-500 transition-colors duration-150">
+              <Link href="/alunos" className="font-medium text-sky-400 hover:text-sky-500 transition-colors duration-150">
                 Ver todos
               </Link>
             </div>
@@ -192,7 +182,7 @@ export default function Dashboard() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-600 truncate">Alunos Pendentes</dt>
+                  <dt className="text-sm font-medium text-gray-600 truncate">Pagamento Pendente</dt>
                   <dd>
                     <div className="text-2xl font-semibold text-gray-900">
                       {stats?.pendentes || '0'}
@@ -206,34 +196,6 @@ export default function Dashboard() {
             <div className="text-sm">
               <Link href="/alunos" className="font-medium text-amber-600 hover:text-amber-500 transition-colors duration-150">
                 Ver pendentes
-              </Link>
-            </div>
-          </div>
-        </Card>
-
-        {/* Certificados */}
-        <Card className="border border-gray-200 shadow-sm overflow-hidden">
-          <CardContent className="p-5 bg-gradient-to-br from-white to-blue-50">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 p-2 bg-blue-50 rounded-full">
-                <Award className="h-6 w-6 text-blue-600" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-600 truncate">Certificados Emitidos</dt>
-                  <dd>
-                    <div className="text-2xl font-semibold text-gray-900">
-                      {stats?.certificados || '0'}
-                    </div>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </CardContent>
-          <div className="bg-blue-50 px-5 py-3 border-t border-blue-100">
-            <div className="text-sm">
-              <Link href="/alunos" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-150">
-                Ver certificados
               </Link>
             </div>
           </div>

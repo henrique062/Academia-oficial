@@ -13,17 +13,17 @@ export default function Header({ pageTitle, mobileMenuOpen, setMobileMenuOpen }:
   return (
     <>
       {/* Mobile top menu */}
-      <div className="sticky top-0 z-40 flex items-center gap-x-6 bg-primary-900 border-b border-primary-800 px-4 py-4 shadow-sm sm:px-6 lg:hidden">
+      <div className="sticky top-0 z-40 flex items-center gap-x-6 bg-white border-b border-gray-200 px-4 py-4 shadow-sm sm:px-6 lg:hidden">
         <button 
           type="button" 
-          className="-m-2.5 p-2.5 text-primary-200 hover:text-primary-100 transition-colors duration-150 lg:hidden"
+          className="-m-2.5 p-2.5 text-gray-700 hover:text-primary-600 transition-colors duration-150 lg:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           <span className="sr-only">Abrir menu</span>
           <Menu className="h-6 w-6" />
         </button>
-        <div className="flex-1 text-sm font-semibold leading-6 text-white">{pageTitle}</div>
-        <Avatar className="h-8 w-8 ring-2 ring-primary-700">
+        <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">{pageTitle}</div>
+        <Avatar className="h-8 w-8 ring-2 ring-gray-100">
           <AvatarImage src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="User" />
           <AvatarFallback>AD</AvatarFallback>
         </Avatar>

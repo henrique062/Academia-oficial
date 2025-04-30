@@ -29,7 +29,7 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <div className="flex h-full">
         {/* Sidebar - desktop */}
         <Sidebar mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
@@ -37,7 +37,7 @@ export default function Layout({ children }: LayoutProps) {
         {/* Mobile sidebar overlay */}
         {mobileMenuOpen && (
           <div 
-            className="fixed inset-0 z-30 bg-gray-900 bg-opacity-75 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-30 bg-white/80 backdrop-blur-sm lg:hidden"
             onClick={() => setMobileMenuOpen(false)}
           />
         )}
@@ -51,7 +51,7 @@ export default function Layout({ children }: LayoutProps) {
           />
           
           {/* Dashboard content */}
-          <main className="flex-1 bg-gray-50">
+          <main className="flex-1 bg-white">
             {children}
           </main>
         </div>

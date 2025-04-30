@@ -20,7 +20,8 @@ export function ThemeProvider({
     <NextThemesProvider
       {...props}
       defaultTheme={defaultTheme}
-      // Removi forcedTheme para permitir que o usuário troque o tema
+      enableSystem={false}
+      attribute="class"
     >
       {children}
     </NextThemesProvider>

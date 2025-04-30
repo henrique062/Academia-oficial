@@ -13,7 +13,7 @@ export default function Integracoes() {
         {/* API Overview */}
         <div className="lg:col-span-1">
           <Card className="overflow-hidden">
-            <div className="px-4 py-5 sm:px-6 bg-primary-700 text-white">
+            <div className="px-4 py-5 sm:px-6 bg-gray-100 text-gray-900">
               <h3 className="text-lg font-medium leading-6">Visão Geral da API</h3>
             </div>
             <CardContent className="p-0">
@@ -68,7 +68,7 @@ export default function Integracoes() {
         {/* API Examples */}
         <div className="lg:col-span-2">
           <Card className="overflow-hidden">
-            <div className="px-4 py-5 sm:px-6 bg-primary-700 text-white">
+            <div className="px-4 py-5 sm:px-6 bg-gray-100 text-gray-900">
               <h3 className="text-lg font-medium leading-6">Exemplo de Request</h3>
             </div>
             <CardContent className="p-6">
