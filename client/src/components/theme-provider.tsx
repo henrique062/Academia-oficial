@@ -14,14 +14,13 @@ type ThemeProviderProps = {
 export function ThemeProvider({ 
   children,
   defaultTheme = "dark",
-  forcedTheme = "dark",
   ...props 
 }: ThemeProviderProps) {
   return (
     <NextThemesProvider
       {...props}
       defaultTheme={defaultTheme}
-      forcedTheme={forcedTheme}
+      // Removi forcedTheme para permitir que o usuário troque o tema
     >
       {children}
     </NextThemesProvider>

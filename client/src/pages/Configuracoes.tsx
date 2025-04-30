@@ -109,7 +109,7 @@ export default function Configuracoes() {
                     <Label htmlFor="tema" className="flex flex-col space-y-1">
                       <span>Tema</span>
                     </Label>
-                    <Select defaultValue="light">
+                    <Select defaultValue="dark">
                       <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Selecione o tema" />
                       </SelectTrigger>
