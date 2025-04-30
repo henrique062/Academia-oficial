@@ -68,7 +68,7 @@ export class DatabaseStorage implements IStorage {
   }
   
   // Alunos operations
-  async getAlunos(page = a1, pageSize = 10, search = '', filters: Record<string, any> = {}): Promise<{ data: Aluno[], total: number }> {
+  async getAlunos(page = 1, pageSize = 10, search = '', filters: Record<string, any> = {}): Promise<{ data: Aluno[], total: number }> {
     const offset = (page - 1) * pageSize;
     
     // Start Supabase query
