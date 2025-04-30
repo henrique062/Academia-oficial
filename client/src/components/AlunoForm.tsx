@@ -1072,7 +1072,7 @@ export default function AlunoForm({ defaultValues, isEditing = false, onSuccess 
           >
             Cancelar
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} variant="default">
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
