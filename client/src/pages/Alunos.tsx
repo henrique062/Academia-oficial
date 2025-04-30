@@ -225,7 +225,7 @@ export default function Alunos() {
                   <SelectValue placeholder="Todos" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos</SelectItem>
+                  <SelectItem value="todos">Todos</SelectItem>
                   <SelectItem value="true">Sim</SelectItem>
                   <SelectItem value="false">Não</SelectItem>
                 </SelectContent>
@@ -242,7 +242,7 @@ export default function Alunos() {
                   <SelectValue placeholder="Todos" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos</SelectItem>
+                  <SelectItem value="todos">Todos</SelectItem>
                   <SelectItem value="true">Sim</SelectItem>
                   <SelectItem value="false">Não</SelectItem>
                 </SelectContent>
