@@ -19,7 +19,7 @@ export default function Alunos() {
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState({
-    situacao_atual: "todas",
+    situacao_atual: "Ativo",
     pais: "todos"
   });
   const [debouncedSearch, setDebouncedSearch] = useState("");
