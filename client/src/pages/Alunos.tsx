@@ -19,7 +19,7 @@ export default function Alunos() {
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState({
-    situacao_atual: "Ativo",
+    situacao_atual: "ACTIVE",
     pais: "todos"
   });
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -105,8 +105,8 @@ export default function Alunos() {
       accessorKey: "situacao_atual",
       header: "Situação",
       cell: ({ row }: any) => (
-        <StatusBadge color={row.original.situacao_atual === "Ativo" ? "green" : "red"}>
-          {row.original.situacao_atual === "Ativo" ? "Ativo" : "Inativo"}
+        <StatusBadge color={row.original.situacao_atual === "ACTIVE" ? "green" : "red"}>
+          {row.original.situacao_atual === "ACTIVE" ? "Ativo" : "Inativo"}
         </StatusBadge>
       ),
     },
@@ -183,8 +183,8 @@ export default function Alunos() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="todas">Todas</SelectItem>
-                  <SelectItem value="Ativo">Ativo</SelectItem>
-                  <SelectItem value="Inativo">Inativo</SelectItem>
+                  <SelectItem value="ACTIVE">Ativo</SelectItem>
+                  <SelectItem value="BLOCKED">Inativo</SelectItem>
                 </SelectContent>
               </Select>
             </div>
