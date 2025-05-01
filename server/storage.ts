@@ -133,7 +133,7 @@ export class DatabaseStorage implements IStorage {
       if (filters) {
         if (filters.situacao_atual) {
           console.log('Aplicando filtro situacao_atual:', filters.situacao_atual);
-          query = query.eq('situacao_atual', filters.situacao_atual);
+          query = query.ilike('situacao_atual', `%${filters.situacao_atual}%`);
         }
         
         if (filters.pais) {
