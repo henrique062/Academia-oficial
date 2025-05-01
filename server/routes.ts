@@ -19,7 +19,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Extract filters from query params
       const filters: Record<string, any> = {};
-      const allowedFilters = ['turma', 'situacao_financeira', 'tripulante', 'certificado'];
+      const allowedFilters = ['turma', 'situacao_financeira', 'tripulante', 'certificado', 'situacao_atual', 'pais'];
       
       allowedFilters.forEach(filter => {
         if (req.query[filter] !== undefined) {

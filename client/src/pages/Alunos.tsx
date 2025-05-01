@@ -19,8 +19,8 @@ export default function Alunos() {
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState({
-    situacao_atual: "",
-    pais: ""
+    situacao_atual: "todas",
+    pais: "todos"
   });
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -63,7 +63,7 @@ export default function Alunos() {
       }
       
       Object.entries(filters).forEach(([key, value]) => {
-        if (value) {
+        if (value && value !== 'todas' && value !== 'todos') {
           queryParams += `&${key}=${encodeURIComponent(value)}`;
         }
       });
@@ -106,7 +106,7 @@ export default function Alunos() {
       header: "Situação",
       cell: ({ row }: any) => (
         <StatusBadge color={row.original.situacao_atual === "Ativo" ? "green" : "red"}>
-          {row.original.situacao_atual === "Ativo" ? "ACTIVE" : "BLOCKED"}
+          {row.original.situacao_atual === "Ativo" ? "Ativo" : "Inativo"}
         </StatusBadge>
       ),
     },

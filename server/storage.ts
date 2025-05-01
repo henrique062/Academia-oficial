@@ -126,13 +126,18 @@ export class DatabaseStorage implements IStorage {
         query = query.or(`nome.ilike.%${search}%,email.ilike.%${search}%`);
       }
       
+      // Log filters for debugging
+      console.log('Filtros aplicados:', filters);
+      
       // Apply filters if provided
       if (filters) {
         if (filters.situacao_atual) {
+          console.log('Aplicando filtro situacao_atual:', filters.situacao_atual);
           query = query.eq('situacao_atual', filters.situacao_atual);
         }
         
         if (filters.pais) {
+          console.log('Aplicando filtro pais:', filters.pais);
           query = query.eq('pais', filters.pais);
         }
       }

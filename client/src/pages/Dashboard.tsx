@@ -73,7 +73,7 @@ export default function Dashboard() {
       header: "Situação",
       cell: ({ row }: any) => (
         <StatusBadge color={row.original.tripulante ? "green" : "red"}>
-          {row.original.tripulante ? "ACTIVE" : "BLOCKED"}
+          {row.original.tripulante ? "Ativo" : "Inativo"}
         </StatusBadge>
       ),
     },
@@ -81,8 +81,8 @@ export default function Dashboard() {
       accessorKey: "tripulante",
       header: "Tripulante",
       cell: ({ row }: any) => (
-        <StatusBadge color={row.original.tripulante ? "green" : "gray"}>
-          {formatBoolean(row.original.tripulante)}
+        <StatusBadge color={row.original.tripulante ? "green" : "red"}>
+          {row.original.tripulante ? "Ativo" : "Inativo"}
         </StatusBadge>
       ),
     },
@@ -145,7 +145,7 @@ export default function Dashboard() {
           </div>
         </Card>
 
-        {/* Confirmados */}
+        {/* Alunos Ativos */}
         <Card className="border border-gray-200 shadow-sm overflow-hidden">
           <CardContent className="p-5 bg-gradient-to-br from-white to-green-50">
             <div className="flex items-center">
