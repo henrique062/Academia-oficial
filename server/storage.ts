@@ -123,31 +123,22 @@ export class DatabaseStorage implements IStorage {
       
       // Apply search if provided
       if (search) {
-        query = query.or(`nome.ilike.%${search}%,email.ilike.%${search}%,documento.ilike.%${search}%`);
+        query = query.or(`nome.ilike.%${search}%,email.ilike.%${search}%`);
       }
       
       // Apply filters if provided
       if (filters) {
-        if (filters.turma) {
-          query = query.eq('turma', filters.turma);
+        if (filters.situacao_atual) {
+          query = query.eq('situacao_atual', filters.situacao_atual);
         }
         
-        if (filters.situacao_financeira) {
-          query = query.eq('situacao_financeira', filters.situacao_financeira);
-        }
-        
-        if (filters.tripulante !== undefined) {
-          query = query.eq('tripulante', filters.tripulante === 'true');
-        }
-        
-        if (filters.certificado !== undefined) {
-          query = query.eq('certificado', filters.certificado === 'true');
+        if (filters.pais) {
+          query = query.eq('pais', filters.pais);
         }
       }
       
-      // Add pagination and ordering
+      // Add pagination (without ordering by created_at since it's not in the schema anymore)
       const { data, error, count } = await query
-        .order('created_at', { ascending: false })
         .range(offset, offset + pageSize - 1);
       
       if (error) {
@@ -175,7 +166,7 @@ export class DatabaseStorage implements IStorage {
       const { data, error } = await supabase
         .from('alunos')
         .select('*')
-        .eq('id', id)
+        .eq('id_aluno', id)
         .single();
         
       if (error) {
@@ -234,11 +225,8 @@ export class DatabaseStorage implements IStorage {
     try {
       const { data, error } = await supabase
         .from('alunos')
-        .update({
-          ...updateData,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', id)
+        .update(updateData)
+        .eq('id_aluno', id)
         .select()
         .single();
       
@@ -265,7 +253,7 @@ export class DatabaseStorage implements IStorage {
       const { error } = await supabase
         .from('alunos')
         .delete()
-        .eq('id', id);
+        .eq('id_aluno', id);
       
       if (error) {
         // Verifica se o erro é "relation does not exist" - código 42P01
