@@ -41,7 +41,7 @@ export default function Dashboard() {
       
       // Calculate stats
       const total = result.data.length;
-      const confirmados = result.data.filter((aluno: Aluno) => aluno.situacao_financeira === 'Em dia').length;
+      const confirmados = result.data.filter((aluno: Aluno) => aluno.tripulante === true).length;
       const pendentes = result.data.filter((aluno: Aluno) => aluno.situacao_financeira === 'Pendente').length;
       
       return { total, confirmados, pendentes };
@@ -72,8 +72,8 @@ export default function Dashboard() {
       accessorKey: "situacao_financeira",
       header: "Situação",
       cell: ({ row }: any) => (
-        <StatusBadge color={getSituacaoFinanceiraColor(row.original.situacao_financeira)}>
-          {row.original.situacao_financeira}
+        <StatusBadge color={row.original.tripulante ? "green" : "red"}>
+          {row.original.tripulante ? "ACTIVE" : "BLOCKED"}
         </StatusBadge>
       ),
     },
@@ -154,7 +154,7 @@ export default function Dashboard() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-600 truncate">Alunos Confirmados</dt>
+                  <dt className="text-sm font-medium text-gray-600 truncate">Alunos Ativos</dt>
                   <dd>
                     <div className="text-2xl font-semibold text-gray-900">
                       {stats?.confirmados || '0'}
@@ -233,8 +233,8 @@ export default function Dashboard() {
       {/* Delete dialog */}
       {selectedAluno && (
         <DeleteAlunoDialog
-          alunoId={selectedAluno.id}
-          alunoNome={selectedAluno.nome}
+          alunoId={selectedAluno.id_aluno}
+          alunoNome={selectedAluno.nome || "Aluno"}
           isOpen={deleteDialogOpen}
           setIsOpen={setDeleteDialogOpen}
           onSuccess={handleDeleteSuccess}

@@ -66,9 +66,9 @@ export function getBooleanBadgeColor(value: boolean | undefined | null): "red" |
   return 'gray';
 }
 
-// Format boolean as Sim/Não
+// Format boolean as Sim/Não or ACTIVE/BLOCKED
 export function formatBoolean(value: boolean | undefined | null): string {
-  if (value === true) return 'Sim';
-  if (value === false) return 'Não';
+  if (value === true) return 'ACTIVE';
+  if (value === false) return 'BLOCKED';
   return '-';
 }
