@@ -5,25 +5,38 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import Layout from "@/components/Layout";
-import Dashboard from "@/pages/Dashboard";
-import CadastroAluno from "@/pages/CadastroAluno";
-import Alunos from "@/pages/Alunos";
-import Integracoes from "@/pages/Integracoes";
-import Configuracoes from "@/pages/Configuracoes";
-import NotFound from "@/pages/not-found";
+import { Suspense, lazy } from "react";
+import { Loader2 } from "lucide-react";
+
+// Lazy load components
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const CadastroAluno = lazy(() => import("@/pages/CadastroAluno"));
+const Alunos = lazy(() => import("@/pages/Alunos"));
+const Integracoes = lazy(() => import("@/pages/Integracoes"));
+const Configuracoes = lazy(() => import("@/pages/Configuracoes"));
+const NotFound = lazy(() => import("@/pages/not-found"));
+
+// Componente de loading
+const LoadingFallback = () => (
+  <div className="flex justify-center items-center h-full min-h-[400px]">
+    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+  </div>
+);
 
 function Router() {
   return (
     <Layout>
-      <Switch>
-        <Route path="/" component={Dashboard} />
-        <Route path="/cadastro" component={CadastroAluno} />
-        <Route path="/alunos" component={Alunos} />
-        <Route path="/integracoes" component={Integracoes} />
-        <Route path="/configuracoes" component={Configuracoes} />
-        <Route path="/alunos/:id/edit" component={CadastroAluno} />
-        <Route component={NotFound} />
-      </Switch>
+      <Suspense fallback={<LoadingFallback />}>
+        <Switch>
+          <Route path="/" component={Dashboard} />
+          <Route path="/cadastro" component={CadastroAluno} />
+          <Route path="/alunos" component={Alunos} />
+          <Route path="/integracoes" component={Integracoes} />
+          <Route path="/configuracoes" component={Configuracoes} />
+          <Route path="/alunos/:id/edit" component={CadastroAluno} />
+          <Route component={NotFound} />
+        </Switch>
+      </Suspense>
     </Layout>
   );
 }

@@ -1,10 +1,26 @@
 import express, { type Request, Response, NextFunction } from "express";
+import compression from "compression";
+import helmet from "helmet";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { setupSwagger } from "./swagger";
+import { apiLimiter } from "./middleware/rate-limiter";
 
 const app = express();
+
+// Adiciona headers de segurança
+app.use(helmet({
+  contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false,
+}));
+
+// Compressão de respostas
+app.use(compression());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Aplicar rate limiting a todas as rotas da API
+app.use('/api', apiLimiter);
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -38,6 +54,9 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
+  
+  // Configurar o Swagger para documentação da API
+  setupSwagger(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
@@ -66,5 +85,6 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    log(`API Documentation available at http://localhost:${port}/api-docs`);
   });
 })();
