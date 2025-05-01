@@ -19,10 +19,8 @@ export default function Alunos() {
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState({
-    turma: "",
-    situacao_financeira: "",
-    tripulante: "",
-    certificado: ""
+    situacao_atual: "",
+    pais: ""
   });
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -90,46 +88,37 @@ export default function Alunos() {
   
   const columns = [
     {
+      accessorKey: "id_aluno",
+      header: "ID",
+      cell: ({ row }: any) => <span className="font-medium">{row.original.id_aluno}</span>,
+    },
+    {
       accessorKey: "nome",
       header: "Nome",
       cell: ({ row }: any) => <span className="font-medium">{row.original.nome}</span>,
     },
     {
-      accessorKey: "turma",
-      header: "Turma",
+      accessorKey: "email",
+      header: "Email",
     },
     {
-      accessorKey: "situacao_financeira",
+      accessorKey: "situacao_atual",
       header: "Situação",
       cell: ({ row }: any) => (
-        <StatusBadge color={getSituacaoFinanceiraColor(row.original.situacao_financeira)}>
-          {row.original.situacao_financeira}
+        <StatusBadge color={row.original.situacao_atual === "Ativo" ? "green" : "red"}>
+          {row.original.situacao_atual || "Não definido"}
         </StatusBadge>
       ),
     },
     {
-      accessorKey: "tripulante",
-      header: "Tripulante",
-      cell: ({ row }: any) => (
-        <StatusBadge color={row.original.tripulante ? "green" : "gray"}>
-          {formatBoolean(row.original.tripulante)}
-        </StatusBadge>
-      ),
-    },
-    {
-      accessorKey: "certificado",
-      header: "Certificado",
-      cell: ({ row }: any) => (
-        <StatusBadge color={row.original.certificado ? "green" : "gray"}>
-          {formatBoolean(row.original.certificado)}
-        </StatusBadge>
-      ),
+      accessorKey: "pais",
+      header: "País",
     },
     {
       id: "actions",
       cell: ({ row }: any) => (
         <div className="flex justify-end gap-2">
-          <Link href={`/alunos/${row.original.id}/edit`}>
+          <Link href={`/alunos/${row.original.id_aluno}/edit`}>
             <Button variant="ghost" size="icon">
               <Edit className="h-4 w-4 text-primary-600" />
             </Button>
@@ -182,74 +171,38 @@ export default function Alunos() {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="turma" className="block text-sm font-medium mb-1">Turma</Label>
+              <Label htmlFor="situacao_atual" className="block text-sm font-medium mb-1">Situação</Label>
               <Select 
-                value={filters.turma} 
-                onValueChange={(value) => handleFilterChange('turma', value)}
+                value={filters.situacao_atual} 
+                onValueChange={(value) => handleFilterChange('situacao_atual', value)}
               >
-                <SelectTrigger id="turma">
-                  <SelectValue placeholder="Todas as turmas" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todas">Todas as turmas</SelectItem>
-                  <SelectItem value="Janeiro/2024">Janeiro/2024</SelectItem>
-                  <SelectItem value="Fevereiro/2024">Fevereiro/2024</SelectItem>
-                  <SelectItem value="Março/2024">Março/2024</SelectItem>
-                  <SelectItem value="Abril/2024">Abril/2024</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <Label htmlFor="situacao" className="block text-sm font-medium mb-1">Situação</Label>
-              <Select 
-                value={filters.situacao_financeira} 
-                onValueChange={(value) => handleFilterChange('situacao_financeira', value)}
-              >
-                <SelectTrigger id="situacao">
+                <SelectTrigger id="situacao_atual">
                   <SelectValue placeholder="Todas" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="todas">Todas</SelectItem>
-                  <SelectItem value="Em dia">Em dia</SelectItem>
-                  <SelectItem value="Pendente">Pendente</SelectItem>
-                  <SelectItem value="Atrasado">Atrasado</SelectItem>
+                  <SelectItem value="Ativo">Ativo</SelectItem>
+                  <SelectItem value="Inativo">Inativo</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
             <div>
-              <Label htmlFor="tripulante" className="block text-sm font-medium mb-1">É Tripulante?</Label>
+              <Label htmlFor="pais" className="block text-sm font-medium mb-1">País</Label>
               <Select 
-                value={filters.tripulante} 
-                onValueChange={(value) => handleFilterChange('tripulante', value)}
+                value={filters.pais} 
+                onValueChange={(value) => handleFilterChange('pais', value)}
               >
-                <SelectTrigger id="tripulante">
+                <SelectTrigger id="pais">
                   <SelectValue placeholder="Todos" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="todos">Todos</SelectItem>
-                  <SelectItem value="true">Sim</SelectItem>
-                  <SelectItem value="false">Não</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <Label htmlFor="certificado" className="block text-sm font-medium mb-1">Certificado</Label>
-              <Select 
-                value={filters.certificado} 
-                onValueChange={(value) => handleFilterChange('certificado', value)}
-              >
-                <SelectTrigger id="certificado">
-                  <SelectValue placeholder="Todos" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos</SelectItem>
-                  <SelectItem value="true">Sim</SelectItem>
-                  <SelectItem value="false">Não</SelectItem>
+                  <SelectItem value="Brasil">Brasil</SelectItem>
+                  <SelectItem value="Portugal">Portugal</SelectItem>
+                  <SelectItem value="Outros">Outros</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -271,8 +224,8 @@ export default function Alunos() {
       {/* Delete dialog */}
       {selectedAluno && (
         <DeleteAlunoDialog
-          alunoId={selectedAluno.id}
-          alunoNome={selectedAluno.nome}
+          alunoId={selectedAluno.id_aluno}
+          alunoNome={selectedAluno.nome || "Aluno"}
           isOpen={deleteDialogOpen}
           setIsOpen={setDeleteDialogOpen}
           onSuccess={handleDeleteSuccess}

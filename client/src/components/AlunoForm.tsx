@@ -27,16 +27,7 @@ import { formatDate } from "@/lib/utils";
 // Extend the schema with custom validation
 const alunoFormSchema = insertAlunoSchema.extend({
   email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
-}).superRefine((data, ctx) => {
-  if (!data.tripulante && data.certificado) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Aluno não pode ter certificado se não for tripulante",
-      path: ["certificado"],
-    });
-  }
-  
-  return true;
+  situacao_atual: z.string().optional(),
 });
 
 type AlunoFormValues = z.infer<typeof alunoFormSchema>;
@@ -56,19 +47,9 @@ export default function AlunoForm({ defaultValues, isEditing = false, onSuccess 
   // Prepare default values with empty values if none provided
   const formDefaultValues: Partial<AlunoFormValues> = {
     nome: "",
-    documento: "",
     email: "",
     pais: "Brasil",
-    telefone: "",
-    whatsapp: "",
-    turma: "",
-    data_confirmacao: new Date().toISOString().split("T")[0],
-    situacao_financeira: "Em dia",
-    periodo_acesso: "12 meses",
-    tripulante: false,
-    pronto: false,
-    certificado: false,
-    stcw: false,
+    situacao_atual: "Ativo",
     ...defaultValues,
   };
 
@@ -178,6 +159,28 @@ export default function AlunoForm({ defaultValues, isEditing = false, onSuccess 
                         <FormControl>
                           <Input type="email" {...field} />
                         </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="situacao_atual"
+                    render={({ field }) => (
+                      <FormItem className="sm:col-span-3">
+                        <FormLabel>Situação Atual</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione a situação" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Ativo">Ativo</SelectItem>
+                            <SelectItem value="Inativo">Inativo</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
