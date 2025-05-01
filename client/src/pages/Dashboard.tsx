@@ -41,8 +41,19 @@ export default function Dashboard() {
       
       // Calculate stats
       const total = result.data.length;
-      const confirmados = result.data.filter((aluno: Aluno) => aluno.tripulante === true).length;
-      const pendentes = result.data.filter((aluno: Aluno) => aluno.situacao_financeira === 'Pendente').length;
+      
+      // Evitar erros de tipagem, verificando a existência da propriedade antes de filtrar
+      const confirmados = result.data.filter((aluno: any) => 
+        aluno.tripulante === true || 
+        (aluno.status === 'Confirmado') || 
+        (aluno.status === 'ACTIVE')
+      ).length;
+      
+      const pendentes = result.data.filter((aluno: any) => 
+        aluno.situacao_financeira === 'Pendente' || 
+        aluno.status === 'Pendente' || 
+        aluno.situacao_atual === 'Pendente'
+      ).length;
       
       return { total, confirmados, pendentes };
     }
@@ -233,7 +244,7 @@ export default function Dashboard() {
       {/* Delete dialog */}
       {selectedAluno && (
         <DeleteAlunoDialog
-          alunoId={selectedAluno.id_aluno}
+          alunoId={selectedAluno.id || selectedAluno.id_aluno}
           alunoNome={selectedAluno.nome || "Aluno"}
           isOpen={deleteDialogOpen}
           setIsOpen={setDeleteDialogOpen}
