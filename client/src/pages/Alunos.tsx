@@ -106,7 +106,7 @@ export default function Alunos() {
       header: "Situação",
       cell: ({ row }: any) => (
         <StatusBadge color={row.original.situacao_atual === "Ativo" ? "green" : "red"}>
-          {row.original.situacao_atual || "Não definido"}
+          {row.original.situacao_atual === "Ativo" ? "ACTIVE" : "BLOCKED"}
         </StatusBadge>
       ),
     },
