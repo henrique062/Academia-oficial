@@ -1,12 +1,64 @@
-import express, { type Express, Request, Response } from "express";
+import express, { type Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
 import { insertAlunoSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
+import { WebSocketServer } from "ws";
+import { db, supabase } from "./db";
+import { eq } from "drizzle-orm";
+import { alunos } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  const server = createServer(app);
+  const wss = new WebSocketServer({ server });
+  
+  // Health check endpoint for Docker/EasyPanel
+  app.get("/api/health", async (req, res) => {
+    try {
+      // Verificar conexão com o banco de dados
+      const dbStatus = await db.execute('SELECT 1 as db_check')
+        .then(() => "connected")
+        .catch((err) => `error: ${err.message}`);
+      
+      // Informações do sistema
+      const systemInfo = {
+        status: "ok",
+        timestamp: new Date().toISOString(),
+        version: process.env.npm_package_version || "1.0.0",
+        environment: process.env.NODE_ENV || "development",
+        database: dbStatus,
+        uptime: Math.floor(process.uptime()), // segundos
+        memory: {
+          rss: Math.round(process.memoryUsage().rss / (1024 * 1024)), // MB
+          heapTotal: Math.round(process.memoryUsage().heapTotal / (1024 * 1024)), // MB
+          heapUsed: Math.round(process.memoryUsage().heapUsed / (1024 * 1024)), // MB
+        }
+      };
+      
+      // Verificar se deve retornar todas as informações ou apenas o status básico
+      const isDetailedCheck = req.query.detailed === 'true';
+      
+      if (isDetailedCheck) {
+        res.status(200).json(systemInfo);
+      } else {
+        // Resposta simplificada
+        res.status(200).json({
+          status: dbStatus === "connected" ? "ok" : "error",
+          timestamp: systemInfo.timestamp
+        });
+      }
+    } catch (error) {
+      console.error("Health check error:", error);
+      res.status(500).json({ 
+        status: "error", 
+        timestamp: new Date().toISOString(),
+        message: "Failed to perform health check"
+      });
+    }
+  });
+
   // API routes prefix
   const apiRouter = express.Router();
   
@@ -154,6 +206,5 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
   app.use('/api', apiRouter);
 
-  const httpServer = createServer(app);
-  return httpServer;
+  return server;
 }

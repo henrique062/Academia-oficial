@@ -1,116 +1,142 @@
-# Aplicação Fullstack React + Express
+# Tripulante - Dashboard de Alunos
 
-Esta é uma aplicação fullstack moderna utilizando React no frontend e Express no backend, com banco de dados PostgreSQL.
+## Implantação com EasyPanel e Docker
 
-## Tecnologias Utilizadas
+Este projeto está configurado para ser implantado facilmente utilizando EasyPanel (que utiliza Docker internamente).
 
-### Frontend
-- React 18
-- TypeScript
-- Vite
-- TailwindCSS
-- Shadcn/UI (baseado em Radix UI)
-- React Query
-- Wouter (roteamento)
+### Requisitos
 
-### Backend
-- Node.js com Express
-- TypeScript
-- Drizzle ORM
-- PostgreSQL
-- Supabase (opcional)
-- Express Session para autenticação
+- Servidor com EasyPanel instalado
+- Docker e Docker Compose instalados
+- Banco de dados PostgreSQL (incluído no docker-compose)
+- Acesso ao Supabase (para autenticação e armazenamento)
 
-## Requisitos
+### Passos para implantação no EasyPanel
 
-- Node.js 18+ 
-- PostgreSQL
-- npm ou yarn
+1. Clone este repositório no seu servidor:
+   ```bash
+   git clone [URL_DO_REPOSITÓRIO]
+   cd [NOME_DO_DIRETÓRIO]
+   ```
 
-## Estrutura do Projeto
+2. Acesse o painel do EasyPanel no seu navegador (geralmente em `http://seu-servidor:3000`)
 
-```
-/
-├── server/             # Código do servidor Express
-│   ├── index.ts        # Ponto de entrada do servidor
-│   ├── routes.ts       # Definição de rotas da API
-│   ├── db.ts           # Configuração do banco de dados
-│   └── storage.ts      # Utilitários de armazenamento
-│
-├── client/             # Código do cliente React
-│   ├── src/
-│   │   ├── components/ # Componentes reutilizáveis
-│   │   ├── pages/      # Páginas/Rotas
-│   │   ├── lib/        # Bibliotecas e configurações
-│   │   ├── hooks/      # React hooks personalizados
-│   │   ├── types/      # Definições de tipos TypeScript
-│   │   ├── utils/      # Funções utilitárias
-│   │   ├── constants/  # Constantes da aplicação
-│   │   ├── App.tsx     # Componente principal
-│   │   └── main.tsx    # Ponto de entrada do cliente
-│   │
-│   └── index.html      # Arquivo HTML inicial
-│
-├── shared/             # Código compartilhado entre cliente e servidor
-│
-└── public/             # Arquivos estáticos
-```
+3. Crie um novo projeto:
+   - Clique em "Add Project"
+   - Selecione "Docker Compose"
+   - Dê um nome ao projeto (ex: "tripulante-dashboard")
+   - Configure o domínio desejado (ou use o subdomínio padrão do EasyPanel)
 
-## Instalação
+4. Configure as variáveis de ambiente:
+   - `DATABASE_URL`: URL de conexão com o PostgreSQL (postgres://postgres:senha_segura@db:5432/tripulante)
+   - `POSTGRES_USER`: Usuário do PostgreSQL (postgres)
+   - `POSTGRES_PASSWORD`: Senha do PostgreSQL (defina uma senha segura)
+   - `POSTGRES_DB`: Nome do banco de dados (tripulante)
+   - `SUPABASE_URL`: URL do seu projeto Supabase
+   - `SUPABASE_SERVICE_ROLE_KEY`: Chave de serviço do Supabase
+   - `NODE_ENV`: production
+   - `PORT`: 3000
 
-1. Clone o repositório:
+5. Configuração do Docker Compose:
+   - Selecione o arquivo `docker-compose.yml` do repositório
+   - Certifique-se de que o EasyPanel reconheceu todos os serviços definidos no arquivo
+
+6. Iniciar o Deployment:
+   - Clique em "Deploy" para iniciar o processo
+   - Aguarde enquanto o EasyPanel constrói e inicia os contêineres
+
+### Estrutura dos Serviços
+
+O projeto utiliza 3 serviços principais:
+
+1. **app**: A aplicação Node.js/Express com React
+2. **db**: Banco de dados PostgreSQL
+3. **nginx**: Servidor web para proxy reverso e servir arquivos estáticos
+
+### Migração de Dados
+
+A migração do banco de dados ocorrerá automaticamente durante o processo de inicialização dos contêineres, graças ao script `docker-entrypoint.sh`.
+
+### Como configurar SSL/HTTPS
+
+1. Descomente as linhas relacionadas ao Certbot no arquivo `docker-compose.yml`
+2. Crie os diretórios para o Certbot:
+   ```bash
+   mkdir -p certbot/conf certbot/www
+   ```
+3. Descomente as configurações HTTPS no arquivo `nginx.conf`
+4. Reinicie os contêineres:
+   ```bash
+   docker-compose down
+   docker-compose up -d
+   ```
+
+### Verificar Funcionamento
+
+1. Acesse a URL fornecida pelo EasyPanel após a conclusão do deployment
+2. Você deve ver a interface do Dashboard de Alunos
+3. Verifique se os filtros de alunos estão funcionando corretamente
+4. Teste o login e demais funcionalidades
+
+### Solução de Problemas
+
+Se encontrar problemas durante a implantação, verifique:
+
+1. Logs dos contêineres Docker:
+   ```bash
+   docker logs [nome-do-container]
+   ```
+   
+2. Verifique a conectividade entre os serviços:
+   ```bash
+   docker exec -it [nome-do-container-app] wget -O- db:5432
+   ```
+
+3. Certifique-se de que as variáveis de ambiente estão configuradas corretamente no EasyPanel
+
+4. Verifique se o banco de dados PostgreSQL está acessível:
+   ```bash
+   docker exec -it [nome-do-container-db] psql -U postgres -c "SELECT 1"
+   ```
+
+5. Confira se as credenciais do Supabase estão corretas
+
+### Backup e Restauração
+
+Para facilitar o backup e restauração do banco de dados, incluímos scripts úteis:
+
+#### Backup do Banco de Dados
+
+Execute o script de backup:
 ```bash
-git clone [url-do-repositorio]
-cd [nome-do-projeto]
+./scripts/backup-db.sh [nome-do-container-db]
 ```
 
-2. Instale as dependências:
+Os backups são salvos no diretório `./backups` com timestamp.
+
+#### Restauração do Banco de Dados
+
+Para restaurar um backup:
 ```bash
-npm install
+./scripts/restore-db.sh [caminho-do-arquivo-backup] [nome-do-container-db]
 ```
 
-3. Configure as variáveis de ambiente:
-- Crie um arquivo `.env` baseado no `.env.example`
+### Atualizações e Manutenção
 
-4. Execute as migrações do banco de dados:
-```bash
-npm run db:push
-```
+Para atualizar a aplicação:
 
-## Executando a Aplicação
+1. Faça pull das últimas mudanças do repositório:
+   ```bash
+   git pull
+   ```
 
-### Desenvolvimento
+2. Reconstrua e reinicie os contêineres:
+   ```bash
+   docker-compose build
+   docker-compose up -d
+   ```
 
-```bash
-npm run dev
-```
-
-### Produção
-
-```bash
-npm run build
-npm start
-```
-
-## Scripts Disponíveis
-
-- `npm run dev`: Inicia o servidor e o cliente em modo de desenvolvimento
-- `npm run build`: Constrói a aplicação para produção
-- `npm start`: Inicia a aplicação em modo de produção
-- `npm run check`: Verifica os tipos TypeScript
-- `npm run db:push`: Aplica migrações no banco de dados
-- `npm run lint`: Executa o linter
-- `npm run lint:fix`: Corrige problemas de linting automaticamente
-- `npm run format`: Formata o código usando Prettier
-
-## Contribuindo
-
-1. Crie um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
-3. Faça commit das suas alterações (`git commit -m 'Adiciona nova feature'`)
-4. Envie para o branch (`git push origin feature/nova-feature`)
-5. Abra um Pull Request
-
-## Licença
-
-MIT 
+3. Verifique os logs para garantir que tudo está funcionando corretamente:
+   ```bash
+   docker-compose logs -f app
+   ```

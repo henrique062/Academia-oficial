@@ -1,0 +1,80 @@
+name: tripulante-dashboard
+description: Dashboard para gerenciamento de alunos do curso Tripulante
+
+# Porta em que a aplicação vai rodar
+port: 3000
+expose:
+  - port: 3000
+    type: http
+    secure: true
+    metrics: true   # Habilita métricas Prometheus se disponível no EasyPanel
+
+# Configuração do banco de dados PostgreSQL gerenciado pelo EasyPanel  
+db:
+  name: tripulante-db
+  engine: postgres
+  version: "15"
+  resources:
+    cpu: 0.5     # Limite de CPU (cores)
+    memory: 1Gi  # Limite de memória
+
+# Definição dos serviços
+services:
+  # Aplicação principal
+  app:
+    image: ${REGISTRY_HOST}/${REGISTRY_NAMESPACE}/tripulante-dashboard:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=postgres://postgres:${POSTGRES_PASSWORD}@${DB_HOST}:5432/tripulante
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=tripulante
+      # Segredos do Supabase - Atualize com suas credenciais reais
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      # Configurações adicionais
+      - SESSION_SECRET=${SESSION_SECRET:-change-me-in-production}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    # Verificação de saúde
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # Configurações de recursos
+    resources:
+      cpu: 0.5     # Limite de CPU (cores)
+      memory: 1Gi  # Limite de memória
+    # Política de reinicialização
+    restart: unless-stopped
+    volumes:
+      # Volume para backups de banco de dados
+      - name: backups
+        path: /app/backups
+      # Volume para logs
+      - name: logs
+        path: /app/logs
+
+# Volumes persistentes
+volumes:
+  backups:
+    size: 1Gi
+  logs:
+    size: 500Mi
+
+# Cronjobs para manutenção
+cronjobs:
+  # Backup diário do banco de dados (às 03:00 AM)
+  backup:
+    schedule: "0 3 * * *"
+    command: |
+      bash /app/scripts/backup-db.sh tripulante-db
+    image: ${REGISTRY_HOST}/${REGISTRY_NAMESPACE}/tripulante-dashboard:latest
+    volumes:
+      - name: backups
+        path: /app/backups

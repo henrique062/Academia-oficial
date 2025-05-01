@@ -1,28 +1,61 @@
-FROM node:18-alpine AS base
+# Estágio de build
+FROM node:20-alpine AS builder
 
-# Definir o diretório de trabalho
-WORKDIR /app
+WORKDIR /build
 
-# Instalar dependências
-FROM base as deps
-COPY package.json package-lock.json ./
+# Instalar dependências do sistema necessárias para o build
+RUN apk add --no-cache python3 make g++
+
+# Copiar arquivos de dependências primeiro (para aproveitar o cache do Docker)
+COPY package*.json ./
+
+# Instalar todas as dependências (incluindo devDependencies)
 RUN npm ci
 
-# Construir aplicação
-FROM deps as builder
+# Copiar código fonte
 COPY . .
+
+# Compilar o código TypeScript e os assets
 RUN npm run build
 
-# Imagem de produção
-FROM base as runner
+# Remover devDependencies para reduzir o tamanho da imagem final
+RUN npm prune --production
 
-ENV NODE_ENV production
+# Estágio de produção
+FROM node:20-alpine
 
-# Copiar arquivos necessários
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
+WORKDIR /app
 
+# Instalar somente as ferramentas necessárias em produção
+RUN apk add --no-cache postgresql-client curl
+
+# Copiar artefatos do build
+COPY --from=builder /build/dist ./dist
+COPY --from=builder /build/node_modules ./node_modules
+COPY --from=builder /build/package*.json ./
+COPY --from=builder /build/public ./public
+
+# Copiar scripts necessários
+COPY scripts ./scripts
+COPY docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
+
+# Copiar arquivos de configuração necessários
+COPY .env.example ./.env.example
+COPY drizzle.config.ts ./drizzle.config.ts
+COPY nginx.conf ./nginx.conf
+
+# Para evitar problemas com scripts
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# Verificação de saúde
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:3000/api/health || exit 1
+
+# Expor porta
 EXPOSE 3000
 
-CMD ["node", "dist/index.js"] 
+# Usar script de inicialização
+ENTRYPOINT ["./docker-entrypoint.sh"]
+CMD ["node", "dist/server/index.js"]
