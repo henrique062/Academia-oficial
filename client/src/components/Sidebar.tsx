@@ -27,7 +27,7 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }: SidebarPr
             <Link href="/" className="flex items-center">
               <div className="flex items-center gap-2">
                 <Ship className="h-8 w-8 text-primary" />
-                <span className="text-xl font-bold text-foreground">Tripulante</span>
+                <span className="text-xl font-bold text-white">Tripulante</span>
               </div>
             </Link>
           </div>
@@ -42,14 +42,14 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }: SidebarPr
                         className={cn(
                           item.current
                             ? "bg-primary text-primary-foreground shadow-sm"
-                            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                            : "text-white hover:bg-accent hover:text-accent-foreground",
                           "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 transition-colors duration-150"
                         )}
                       >
                         <item.icon 
                           className={cn(
                             "h-6 w-6 shrink-0",
-                            item.current ? "text-primary-foreground" : "text-muted-foreground group-hover:text-accent-foreground transition-colors duration-150"
+                            item.current ? "text-primary-foreground" : "text-white group-hover:text-accent-foreground transition-colors duration-150"
                           )} 
                         />
                         {item.name}
@@ -61,9 +61,9 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }: SidebarPr
               <li className="mt-auto pb-6">
                 <button
                   type="button"
-                  className="group flex w-full gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors duration-150"
+                  className="group flex w-full gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-white hover:bg-accent hover:text-accent-foreground transition-colors duration-150"
                 >
-                  <LogOut className="h-6 w-6 shrink-0 text-muted-foreground group-hover:text-accent-foreground transition-colors duration-150" />
+                  <LogOut className="h-6 w-6 shrink-0 text-white group-hover:text-accent-foreground transition-colors duration-150" />
                   Sair
                 </button>
               </li>
@@ -84,7 +84,7 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }: SidebarPr
             <Link href="/" className="flex items-center">
               <div className="flex items-center gap-2">
                 <Ship className="h-8 w-8 text-primary" />
-                <span className="text-xl font-bold text-foreground">Tripulante</span>
+                <span className="text-xl font-bold text-white">Tripulante</span>
               </div>
             </Link>
           </div>
@@ -99,7 +99,7 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }: SidebarPr
                         className={cn(
                           item.current
                             ? "bg-primary text-primary-foreground shadow-sm"
-                            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                            : "text-white hover:bg-accent hover:text-accent-foreground",
                           "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 transition-colors duration-150"
                         )}
                         onClick={() => setMobileMenuOpen(false)}
@@ -107,7 +107,7 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }: SidebarPr
                         <item.icon 
                           className={cn(
                             "h-6 w-6 shrink-0",
-                            item.current ? "text-primary-foreground" : "text-muted-foreground group-hover:text-accent-foreground transition-colors duration-150"
+                            item.current ? "text-primary-foreground" : "text-white group-hover:text-accent-foreground transition-colors duration-150"
                           )} 
                         />
                         {item.name}
@@ -119,9 +119,9 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }: SidebarPr
               <li className="mt-auto pb-6">
                 <button
                   type="button"
-                  className="group flex w-full gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors duration-150"
+                  className="group flex w-full gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-white hover:bg-accent hover:text-accent-foreground transition-colors duration-150"
                 >
-                  <LogOut className="h-6 w-6 shrink-0 text-muted-foreground group-hover:text-accent-foreground transition-colors duration-150" />
+                  <LogOut className="h-6 w-6 shrink-0 text-white group-hover:text-accent-foreground transition-colors duration-150" />
                   Sair
                 </button>
               </li>
