@@ -13,6 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -101,7 +102,7 @@ export function DataTable<TData, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} className="text-secondary-foreground">
                     {header.isPlaceholder ? null : (
                       <div className="flex items-center">
                         {flexRender(
@@ -131,7 +132,7 @@ export function DataTable<TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
                   Nenhum resultado encontrado.
                 </TableCell>
               </TableRow>
@@ -140,7 +141,7 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mt-4 rounded-lg shadow">
+      <div className="flex items-center justify-between border-t border-border bg-background px-4 py-3 sm:px-6 mt-4 rounded-lg shadow-sm">
         <div className="flex flex-1 justify-between sm:hidden">
           <Button
             variant="outline"
@@ -161,7 +162,7 @@ export function DataTable<TData, TValue>({
         </div>
         <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-secondary-foreground">
               Mostrando <span className="font-medium">{startItem}</span> a{" "}
               <span className="font-medium">{endItem}</span> de{" "}
               <span className="font-medium">{totalItems || data.length}</span> resultados
@@ -181,7 +182,6 @@ export function DataTable<TData, TValue>({
               </Button>
               
               {pageNumbers.map((page, index) => {
-                // Check if we need to insert ellipsis
                 const needsEllipsisAfter = index < pageNumbers.length - 1 && pageNumbers[index + 1] - page > 1;
                 
                 return (
@@ -189,7 +189,10 @@ export function DataTable<TData, TValue>({
                     <Button
                       variant={currentPage === page ? "default" : "outline"}
                       size="sm"
-                      className={`${currentPage === page ? "bg-primary-400 text-white" : "text-gray-900"} rounded-none`}
+                      className={cn(
+                        "rounded-none",
+                        currentPage === page && "bg-primary text-primary-foreground"
+                      )}
                       onClick={() => handlePageChange(page)}
                     >
                       {page}

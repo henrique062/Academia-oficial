@@ -12,17 +12,25 @@
   --primary: 215 90% 50%;
   --primary-foreground: 0 0% 100%;
   --secondary: 220 14% 96%;
-  --secondary-foreground: 0 0% 0%;
+  --secondary-foreground: 215 25% 27%;
   --muted: 220 14% 96%;
-  --muted-foreground: 220 8% 46%;
+  --muted-foreground: 215 25% 27%;
   --accent: 220 14% 96%;
-  --accent-foreground: 0 0% 0%;
+  --accent-foreground: 215 25% 27%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 100%;
   --border: 220 13% 91%;
   --input: 220 13% 91%;
   --ring: 215 90% 50%;
   --radius: 0.5rem;
+
+  /* Status colors com melhor contraste */
+  --success: 142 72% 29%;
+  --success-foreground: 0 0% 100%;
+  --warning: 45 93% 47%;
+  --warning-foreground: 0 0% 0%;
+  --error: 0 84% 60%;
+  --error-foreground: 0 0% 100%;
 }
 
 @layer base {
@@ -31,7 +39,25 @@
   }
 
   body {
-    @apply font-sans antialiased bg-white text-black;
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+
+  /* Melhorar contraste de textos */
+  .text-muted {
+    @apply text-muted-foreground;
+  }
+
+  /* Melhorar contraste de badges */
+  .badge-success {
+    @apply bg-success text-success-foreground;
+  }
+  
+  .badge-warning {
+    @apply bg-warning text-warning-foreground;
+  }
+  
+  .badge-error {
+    @apply bg-error text-error-foreground;
   }
 }
 
