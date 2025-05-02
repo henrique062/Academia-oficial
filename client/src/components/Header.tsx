@@ -1,7 +1,7 @@
 import { BellIcon, Menu, Search } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Input } from "./ui/input";
+import { cn } from "../lib/utils";
 
 interface HeaderProps {
   pageTitle: string;

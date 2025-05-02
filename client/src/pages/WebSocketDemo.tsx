@@ -1,5 +1,5 @@
-import Layout from '@/components/Layout';
-import WebSocketConnection from '@/components/WebSocketConnection';
+import Layout from '../components/Layout';
+import WebSocketConnection from '../components/WebSocketConnection';
 
 export default function WebSocketDemo() {
   return (

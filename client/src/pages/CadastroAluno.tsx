@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Params, useParams } from "wouter";
-import AlunoForm from "@/components/AlunoForm";
-import { Skeleton } from "@/components/ui/skeleton";
+import AlunoForm from "../components/AlunoForm";
+import { Skeleton } from "../components/ui/skeleton";
 
 export default function CadastroAluno() {
   const params = useParams<{ id: string }>();

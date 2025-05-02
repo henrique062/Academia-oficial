@@ -1,18 +1,18 @@
 import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { DataTable } from "@/components/ui/data-table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
-import StatusBadge from "@/components/StatusBadge";
-import { formatBoolean, getSituacaoFinanceiraColor } from "@/lib/utils";
+import { DataTable } from "../components/ui/data-table";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { Card, CardContent } from "../components/ui/card";
+import StatusBadge from "../components/StatusBadge";
+import { formatBoolean, getSituacaoFinanceiraColor } from "../lib/utils";
 import { Edit, Trash2, UserPlus, Search } from "lucide-react";
-import DeleteAlunoDialog from "@/components/DeleteAlunoDialog";
-import { Aluno } from "@shared/schema";
-import { queryClient } from "@/lib/queryClient";
-import { Label } from "@/components/ui/label";
+import DeleteAlunoDialog from "../components/DeleteAlunoDialog";
+import { Aluno } from "../../../shared/schema";
+import { queryClient } from "../lib/queryClient";
+import { Label } from "../components/ui/label";
 
 export default function Alunos() {
   const [page, setPage] = useState(1);
