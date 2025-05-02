@@ -18,6 +18,11 @@ COPY . .
 # Compilar o código TypeScript e os assets
 RUN npm run build
 
+# Verificar a estrutura do diretório após o build
+RUN ls -la dist/ || echo "Diretório dist não encontrado"
+RUN ls -la dist/server/ || echo "Diretório dist/server não encontrado"
+RUN find . -name "index.js" | grep -v node_modules
+
 # Remover devDependencies para reduzir o tamanho da imagem final
 RUN npm prune --production
 
@@ -27,13 +32,20 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Instalar ferramentas necessárias em produção (reduzidas sem PostgreSQL)
-RUN apk add --no-cache curl wget busybox-extras 
+RUN apk add --no-cache curl wget busybox-extras jq
 
 # Copiar artefatos do build
 COPY --from=builder /build/dist ./dist
 COPY --from=builder /build/node_modules ./node_modules
 COPY --from=builder /build/package*.json ./
-COPY --from=builder /build/public ./public
+
+# Verificar estrutura após a cópia
+RUN ls -la
+RUN ls -la dist/ || echo "Diretório dist não encontrado"
+RUN ls -la dist/server/ || echo "Diretório dist/server não encontrado"
+
+# Copiar pasta public, se existir
+COPY --from=builder /build/public ./public || echo "Public folder not found"
 
 # Copiar scripts necessários
 COPY scripts ./scripts
@@ -41,8 +53,8 @@ COPY easypanel-entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
 # Copiar arquivos de configuração necessários
-COPY .env.example ./.env.example
-COPY drizzle.config.ts ./drizzle.config.ts
+COPY .env.example ./.env.example || echo "Env example not found"
+COPY drizzle.config.ts ./drizzle.config.ts || echo "Drizzle config not found"
 
 # Ajustar permissions para scripts
 RUN find /app/scripts -type f -name "*.sh" -exec chmod +x {} \;

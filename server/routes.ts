@@ -97,6 +97,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Adicione esta rota em algum lugar apropriado no arquivo
+  app.get('/api/health', (req, res) => {
+    res.status(200).json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      supabase: !!supabase ? 'connected' : 'not_connected',
+      env: process.env.NODE_ENV
+    });
+  });
+
   // API routes prefix
   const apiRouter = express.Router();
   

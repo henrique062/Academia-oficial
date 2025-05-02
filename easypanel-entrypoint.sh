@@ -1,38 +1,39 @@
 #!/bin/sh
 set -e
 
+# Exibir informações do ambiente
+echo "====================================================="
+echo "🚀 INICIANDO TRIPULANTE DASHBOARD - MODO PRODUÇÃO"
+echo "====================================================="
+
+# Verificar diretórios e arquivos importantes
+echo "Verificando arquivos críticos..."
+ls -la /app
+ls -la /app/dist || echo "❌ Diretório /app/dist não encontrado!"
+ls -la /app/dist/server || echo "❌ Diretório /app/dist/server não encontrado!"
+ls -la /app/dist/server/index.js || echo "❌ Arquivo /app/dist/server/index.js não encontrado!"
+
 # Verificar se as variáveis do Supabase estão definidas
 echo "Verificando configuração do Supabase..."
 if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then
   echo "✅ Credenciais do Supabase configuradas através das variáveis de ambiente"
-else
-  # Se não estiverem definidas nas variáveis de ambiente, usar as definidas no Dockerfile
-  if [ -z "$SUPABASE_URL" ]; then
-    echo "⚠️ SUPABASE_URL não definida nas variáveis de ambiente, usando valor padrão do Dockerfile"
-  fi
-  
-  if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
-    echo "⚠️ SUPABASE_SERVICE_ROLE_KEY não definida nas variáveis de ambiente, usando valor padrão do Dockerfile"
-  fi
-fi
-
-# Exibir informações parciais do Supabase para verificação
-if [ -n "$SUPABASE_URL" ]; then
+  # Mostrar versão truncada das credenciais por segurança
   SUPABASE_URL_PREFIX=$(echo "$SUPABASE_URL" | cut -c1-20)
-  echo "🔌 Conectando ao Supabase: ${SUPABASE_URL_PREFIX}..."
+  SUPABASE_KEY_PREFIX=$(echo "$SUPABASE_SERVICE_ROLE_KEY" | cut -c1-10)
+  echo "🔌 Conectando ao Supabase URL: ${SUPABASE_URL_PREFIX}... (chave: ${SUPABASE_KEY_PREFIX}...)"
+else
+  echo "⚠️ Credenciais do Supabase incompletas!"
+  echo "  SUPABASE_URL: ${SUPABASE_URL:-(não definida)}"
+  echo "  SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:+configurada}${SUPABASE_SERVICE_ROLE_KEY:-(não definida)}"
 fi
 
-echo "==================================================="
-echo "TRIPULANTE DASHBOARD - INICIANDO EM MODO PRODUÇÃO"
+# Exibir informações importantes
+echo "====================================================="
 echo "Ambiente: ${NODE_ENV:-production}"
-echo "Banco de dados: Supabase (modo remoto)"
-if [ -n "$SUPABASE_URL" ]; then
-  echo "Supabase: Configurado e ativo"
-else
-  echo "Supabase: Não configurado ou usando valores padrão"
-fi
-echo "==================================================="
+echo "Diretório atual: $(pwd)"
+echo "Conteúdo do processo: $@"
+echo "====================================================="
 
 # Iniciar a aplicação
-echo "Iniciando aplicação..."
+echo "🟢 Iniciando aplicação..."
 exec "$@"

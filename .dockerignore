@@ -1,20 +1,41 @@
-node_modules
-npm-debug.log
-yarn-debug.log
-yarn-error.log
+# Arquivos de sistema
 .git
+.github
 .gitignore
+.DS_Store
 .env
 .env.local
 .env.development
-.env.test
-.DS_Store
+*.log
+
+# Diretórios de dependências e build
+node_modules
 dist
+.cache
 coverage
-.vscode
-README.md
+.nyc_output
+
+# Arquivos de configuração e documentação
 *.md
+*.txt
+LICENSE
+.eslintrc*
+.prettierrc*
+.editorconfig
 .husky
-docker-compose.yml
-Dockerfile
-.dockerignore
+docs
+
+# Arquivos de teste
+__tests__
+test
+tests
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+
+# Exceto os arquivos específicos necessários
+!.env.example
+!README.md
+!SUPABASE-CONFIG.md
+!EASYPANEL-SETUP.md
