@@ -34,6 +34,7 @@ function Router() {
           <Route path="/alunos" component={Alunos} />
           <Route path="/integracoes" component={Integracoes} />
           <Route path="/configuracoes" component={Configuracoes} />
+          <Route path="/websocket" component={WebSocketDemo} />
           <Route path="/alunos/:id/edit" component={CadastroAluno} />
           <Route component={NotFound} />
         </Switch>

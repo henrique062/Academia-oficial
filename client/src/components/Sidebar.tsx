@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
-import { BellIcon, ChartLine, UserPlus, Users, Plug, Sliders, LogOut, Ship } from "lucide-react";
+import { BellIcon, ChartLine, UserPlus, Users, Plug, Sliders, LogOut, Ship, Radio } from "lucide-react";
 
 interface SidebarProps {
   mobileMenuOpen: boolean;
@@ -15,6 +15,7 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }: SidebarPr
     { name: "Cadastrar Aluno", href: "/cadastro", icon: UserPlus, current: location === "/cadastro" },
     { name: "Alunos", href: "/alunos", icon: Users, current: location === "/alunos" },
     { name: "Integrações", href: "/integracoes", icon: Plug, current: location === "/integracoes" },
+    { name: "WebSocket", href: "/websocket", icon: Radio, current: location === "/websocket" },
     { name: "Configurações", href: "/configuracoes", icon: Sliders, current: location === "/configuracoes" },
   ];
 

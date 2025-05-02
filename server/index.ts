@@ -8,6 +8,9 @@ import { apiLimiter } from "./middleware/rate-limiter";
 
 const app = express();
 
+// Configurar trust proxy para funcionamento correto com EasyPanel/Docker
+app.set('trust proxy', true);
+
 // Adiciona headers de segurança
 app.use(helmet({
   contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false,
