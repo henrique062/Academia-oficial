@@ -91,6 +91,23 @@ if grep -q "@vitejs/plugin-react" /app/dist/server/index.js; then
   echo "✅ Correção aplicada ao servidor."
 fi
 
+# Verificar e remover importações do plugin do Replit
+if grep -q "@replit/vite-plugin-runtime-error-modal" /app/dist/server/index.js; then
+  echo "⚠️ Detectada referência ao plugin do Replit no código compilado!"
+  echo "🔧 Removendo referências ao plugin do Replit do servidor..."
+  sed -i 's/.*@replit\/vite-plugin-runtime-error-modal.*//g' /app/dist/server/index.js
+  echo "✅ Correção aplicada para o plugin do Replit."
+fi
+
+# Verificar referências ao plugin do Replit em todos os arquivos JS
+find /app/dist -type f -name "*.js" -exec grep -l "@replit/vite-plugin-runtime-error-modal" {} \; | while read file; do
+  echo "🔧 Removendo referências ao plugin do Replit em: $file"
+  sed -i 's/.*@replit\/vite-plugin-runtime-error-modal.*//g' "$file"
+  # Remover possíveis importações vazias que possam ter ficado
+  sed -i 's/import\s*{\s*}\s*from\s*['"'"'"]\([^'"'"'"]*\)['"'"'"];/\/\/ Importação removida: \1/g' "$file"
+  echo "✅ Correção aplicada"
+done
+
 # Outros problemas conhecidos podem ser corrigidos aqui
 echo "✅ Verificação completa."
 EOF

@@ -12,6 +12,9 @@ COPY package*.json ./
 # Instalar explicitamente o @vitejs/plugin-react primeiro para garantir que esteja disponível
 RUN npm install @vitejs/plugin-react --save-dev
 
+# Tentar instalar o plugin do Replit como opcional (não falhar se não estiver disponível)
+RUN npm install @replit/vite-plugin-runtime-error-modal --save-dev --no-fund --no-audit || echo "Plugin do Replit não disponível, continuando sem ele..."
+
 # Instalar todas as dependências (incluindo devDependencies)
 RUN npm ci
 
@@ -23,6 +26,12 @@ COPY . .
 
 # Verificar se vitest.config.ts existe e removê-lo para build de produção
 RUN if [ -f "vitest.config.ts" ]; then mv vitest.config.ts vitest.config.ts.bak; fi
+
+# Remover referências ao plugin do Replit dos arquivos de configuração
+RUN echo "🔍 Verificando e removendo referências ao plugin do Replit..."
+RUN grep -r "@replit/vite-plugin-runtime-error-modal" --include="*.ts" --include="*.js" . || echo "Nenhuma referência encontrada"
+RUN find . -type f -name "*.ts" -o -name "*.js" | xargs sed -i 's/.*@replit\/vite-plugin-runtime-error-modal.*//g' || echo "Sem alterações"
+RUN find . -type f -name "*.ts" -o -name "*.js" | xargs sed -i '/import\s*{\s*}\s*from/d' || echo "Sem importações vazias"
 
 # Verificar se o plugin react está disponível antes de prosseguir
 RUN ls -la node_modules/@vitejs || echo "Diretório @vitejs não encontrado!"
