@@ -244,7 +244,7 @@ export default function Dashboard() {
       {/* Delete dialog */}
       {selectedAluno && (
         <DeleteAlunoDialog
-          alunoId={selectedAluno.id || selectedAluno.id_aluno}
+          alunoId={selectedAluno.id_aluno}
           alunoNome={selectedAluno.nome || "Aluno"}
           isOpen={deleteDialogOpen}
           setIsOpen={setDeleteDialogOpen}

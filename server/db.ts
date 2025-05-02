@@ -20,7 +20,10 @@ let connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
   const dbUser = process.env.POSTGRES_USER || 'postgres';
   const dbPass = process.env.POSTGRES_PASSWORD || 'postgres';
-  const dbHost = process.env.POSTGRES_HOST || 'db'; // 'db' é o padrão no Docker/EasyPanel
+  
+  // Verificar se estamos em ambiente EasyPanel ou similar (sem o container 'db')
+  // Se a variável DB_HOST ou POSTGRES_HOST existir, use ela, caso contrário padrão para 'db'
+  const dbHost = process.env.DB_HOST || process.env.POSTGRES_HOST || 'db';
   const dbPort = process.env.POSTGRES_PORT || '5432';
   const dbName = process.env.POSTGRES_DB || 'tripulante';
   
@@ -35,5 +38,24 @@ if (!connectionString) {
 const sslConfig = process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false;
 console.log(`Configuração SSL: ${process.env.NODE_ENV === 'production' ? 'Habilitado (rejectUnauthorized=false)' : 'Desabilitado'}`);
 
-const client = postgres(connectionString, { ssl: sslConfig });
+// Adiciona timeout mais longo para ambientes externos
+const pgOptions = { 
+  ssl: sslConfig,
+  connect_timeout: 10, // mais tempo para conectar
+  idle_timeout: 30,    // mais tempo para conexões ociosas
+  max_lifetime: 60 * 30 // permitir que conexões durem mais tempo
+};
+
+// Inicialização segura do cliente PostgreSQL
+let client;
+try {
+  client = postgres(connectionString, pgOptions);
+  console.log("Cliente PostgreSQL inicializado com sucesso");
+} catch (error) {
+  console.error("Erro ao configurar conexão com o banco de dados:", error);
+  console.log("Usando cliente de fallback (aplicação poderá falhar em runtime)");
+  client = postgres('postgres://invalid:invalid@localhost:5432/invalid', { ssl: false });
+}
+
+// Exporta o objeto db usando o cliente configurado
 export const db = drizzle(client, { schema });
