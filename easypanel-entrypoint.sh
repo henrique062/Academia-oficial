@@ -101,6 +101,22 @@ fi
 
 # Verificar se as variáveis do Supabase estão definidas
 echo "Verificando configuração do Supabase..."
+
+# Tentar carregar variáveis de ambiente de um arquivo .env se existir
+if [ -f ".env" ]; then
+  echo "🔍 Arquivo .env encontrado, carregando variáveis..."
+  # Extrair variáveis do Supabase do arquivo .env (somente se não estiverem definidas)
+  if [ -z "$SUPABASE_URL" ] && grep -q "SUPABASE_URL" .env; then
+    export SUPABASE_URL=$(grep "SUPABASE_URL" .env | cut -d '=' -f2)
+    echo "✅ SUPABASE_URL carregada do arquivo .env"
+  fi
+  if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ] && grep -q "SUPABASE_SERVICE_ROLE_KEY" .env; then
+    export SUPABASE_SERVICE_ROLE_KEY=$(grep "SUPABASE_SERVICE_ROLE_KEY" .env | cut -d '=' -f2)
+    echo "✅ SUPABASE_SERVICE_ROLE_KEY carregada do arquivo .env"
+  fi
+fi
+
+# Verificar se as variáveis estão definidas agora
 if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then
   echo "✅ Credenciais do Supabase configuradas através das variáveis de ambiente"
   # Mostrar versão truncada das credenciais por segurança
@@ -111,7 +127,19 @@ else
   echo "⚠️ Credenciais do Supabase incompletas!"
   echo "  SUPABASE_URL: ${SUPABASE_URL:-(não definida)}"
   echo "  SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:+configurada}${SUPABASE_SERVICE_ROLE_KEY:-(não definida)}"
-  echo "  A aplicação pode não funcionar corretamente sem estas credenciais."
+  
+  # Criar arquivo .env temporário com variáveis vazias para não falhar completamente
+  echo "🔧 Criando arquivo .env temporário com variáveis vazias para debug..."
+  cat > .env << EOF
+# Arquivo .env temporário criado pelo script de inicialização
+# Substitua estes valores pelas suas credenciais reais do Supabase
+SUPABASE_URL=https://seu-projeto.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=sua-chave-service-role
+NODE_ENV=production
+PORT=3000
+EOF
+  echo "⚠️ A aplicação pode não funcionar corretamente sem estas credenciais."
+  echo "⚠️ Edite o arquivo .env no container ou configure as variáveis no EasyPanel."
 fi
 
 # Exibir informações importantes

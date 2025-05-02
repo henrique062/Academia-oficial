@@ -86,8 +86,8 @@ echo "Script de correção para o EasyPanel executado com sucesso!"' > /app/scri
 RUN chmod +x ./scripts/easypanel-fix.sh || echo "Não foi possível criar script de correção"
 
 # Copiar arquivos de configuração necessários
-COPY .env.example ./.env.example || echo "Env example not found"
-COPY drizzle.config.ts ./drizzle.config.ts || echo "Drizzle config not found"
+COPY .env.example ./.env.example 2>/dev/null || echo "Env example not found"
+COPY drizzle.config.ts ./drizzle.config.ts 2>/dev/null || echo "Drizzle config not found"
 
 # Ajustar permissions para scripts
 RUN find /app/scripts -type f -name "*.sh" -exec chmod +x {} \;
@@ -95,9 +95,15 @@ RUN find /app/scripts -type f -name "*.sh" -exec chmod +x {} \;
 # Configurar variáveis de ambiente
 ENV NODE_ENV=production
 ENV PORT=3000
-# As credenciais do Supabase devem ser fornecidas como variáveis de ambiente no Easypanel
-# ENV SUPABASE_URL=https://example.supabase.co
-# ENV SUPABASE_SERVICE_ROLE_KEY=your-key-here
+
+# ======================================================
+# IMPORTANTE: Você DEVE configurar estas variáveis no EasyPanel:
+# - SUPABASE_URL: URL do seu projeto Supabase
+# - SUPABASE_SERVICE_ROLE_KEY: Chave de serviço do Supabase
+# 
+# A aplicação NÃO funcionará corretamente sem estas credenciais.
+# Você pode configurá-las como variáveis de ambiente no EasyPanel.
+# ======================================================
 
 # Verificação de saúde mais robusta
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
