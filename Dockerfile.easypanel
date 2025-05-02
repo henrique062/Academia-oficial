@@ -12,11 +12,20 @@ COPY package*.json ./
 # Instalar todas as dependências (incluindo devDependencies)
 RUN npm ci
 
+# Criar diretório de scripts se não existir
+RUN mkdir -p scripts
+
 # Copiar código fonte
 COPY . .
 
+# Verificar se vitest.config.ts existe e removê-lo para build de produção
+RUN if [ -f "vitest.config.ts" ]; then mv vitest.config.ts vitest.config.ts.bak; fi
+
 # Compilar o código TypeScript e os assets
-RUN npm run build
+RUN NODE_ENV=production npm run build
+
+# Restaurar vitest.config.ts se foi removido
+RUN if [ -f "vitest.config.ts.bak" ]; then mv vitest.config.ts.bak vitest.config.ts; fi
 
 # Verificar a estrutura do diretório após o build
 RUN ls -la dist/ || echo "Diretório dist não encontrado"
@@ -47,10 +56,17 @@ RUN ls -la dist/server/ || echo "Diretório dist/server não encontrado"
 # Copiar pasta public, se existir
 COPY --from=builder /build/public ./public || echo "Public folder not found"
 
+# Criar diretórios para scripts
+RUN mkdir -p scripts/supabase
+
 # Copiar scripts necessários
-COPY scripts ./scripts
+COPY --from=builder /build/scripts ./scripts
 COPY easypanel-entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
+
+# Garantir que scripts de correção tenham permissão de execução
+RUN chmod +x ./scripts/easypanel-fix.sh || echo "Script de correção não encontrado, será criado no primeiro startup"
+RUN chmod +x ./scripts/fix-build.js || echo "Script de build não encontrado"
 
 # Copiar arquivos de configuração necessários
 COPY .env.example ./.env.example || echo "Env example not found"
@@ -60,7 +76,6 @@ COPY drizzle.config.ts ./drizzle.config.ts || echo "Drizzle config not found"
 RUN find /app/scripts -type f -name "*.sh" -exec chmod +x {} \;
 
 # Criar script auxiliar para Supabase
-RUN mkdir -p /app/scripts/supabase
 RUN echo '#!/bin/sh\n\
 # Script para criar a função RPC que lista tabelas no Supabase\n\
 curl -X POST ${SUPABASE_URL}/rest/v1/rpc/get_tables \
@@ -70,7 +85,7 @@ curl -X POST ${SUPABASE_URL}/rest/v1/rpc/get_tables \
   -d "{}" || echo "Falha ao testar função RPC"' > /app/scripts/supabase/test-rpc.sh
 RUN chmod +x /app/scripts/supabase/test-rpc.sh
 
-# Configurar variáveis de ambiente do Supabase diretamente
+# Configurar variáveis de ambiente
 ENV NODE_ENV=production
 ENV PORT=3000
 # Credenciais do Supabase embutidas (substitua pelos seus valores reais)

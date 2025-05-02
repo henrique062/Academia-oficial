@@ -13,6 +13,14 @@ ls -la /app/dist || echo "❌ Diretório /app/dist não encontrado!"
 ls -la /app/dist/server || echo "❌ Diretório /app/dist/server não encontrado!"
 ls -la /app/dist/server/index.js || echo "❌ Arquivo /app/dist/server/index.js não encontrado!"
 
+# Executar script de correção para o EasyPanel
+if [ -f "/app/scripts/easypanel-fix.sh" ]; then
+  echo "🔧 Executando script de correção para o EasyPanel..."
+  sh /app/scripts/easypanel-fix.sh
+else
+  echo "⚠️ Script de correção para o EasyPanel não encontrado!"
+fi
+
 # Verificar se as variáveis do Supabase estão definidas
 echo "Verificando configuração do Supabase..."
 if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then

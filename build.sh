@@ -14,8 +14,9 @@ npm -v
 echo "📦 Instalando dependências..."
 npm ci
 
-# Compilar o projeto
-echo "🔨 Compilando o projeto..."
+# Compilar o projeto com NODE_ENV=production
+echo "🔨 Compilando o projeto em modo produção..."
+export NODE_ENV=production
 npm run build
 
 # Verificar diretórios gerados

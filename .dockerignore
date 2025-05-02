@@ -39,3 +39,6 @@ tests
 !README.md
 !SUPABASE-CONFIG.md
 !EASYPANEL-SETUP.md
+!scripts/
+!scripts/fix-build.js
+!scripts/easypanel-fix.sh
