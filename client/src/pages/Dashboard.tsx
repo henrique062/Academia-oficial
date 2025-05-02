@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Card, CardContent } from "../components/ui/card";
@@ -6,7 +7,6 @@ import { Button } from "../components/ui/button";
 import StatusBadge from "../components/StatusBadge";
 import { formatBoolean, getSituacaoFinanceiraColor } from "../lib/utils";
 import { Edit, Trash2, UserPlus, Users, CheckCircle, Clock } from "lucide-react";
-import { useState } from "react";
 import { Aluno } from "../../../shared/schema";
 import DeleteAlunoDialog from "../components/DeleteAlunoDialog";
 import { queryClient } from "../lib/queryClient";

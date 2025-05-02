@@ -1,4 +1,5 @@
 
+import React, { Suspense, lazy } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -6,7 +7,6 @@ import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { ThemeProvider } from "./components/theme-provider";
 import Layout from "./components/Layout";
-import { Suspense, lazy } from "react";
 import { Loader2 } from "lucide-react";
 
 // Lazy load components

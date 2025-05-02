@@ -79,8 +79,8 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Usar a porta da variável de ambiente PORT ou o valor padrão 3000
-  const port = parseInt(process.env.PORT || '3000', 10);
+  // Usar a porta da variável de ambiente PORT ou o valor padrão 5000
+  const port = parseInt(process.env.PORT || '5000', 10);
   server.listen({
     port,
     host: "0.0.0.0",

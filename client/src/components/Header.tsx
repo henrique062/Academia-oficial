@@ -1,3 +1,4 @@
+import React from "react";
 import { BellIcon, Menu, Search } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Input } from "./ui/input";
