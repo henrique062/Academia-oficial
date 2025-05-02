@@ -1,11 +1,12 @@
 # Instruções para Corrigir o Erro no EasyPanel
 
 ## Problema Identificado
-Existem três problemas principais que estão causando a falha na implantação:
+Existem quatro problemas principais que estão causando a falha na implantação:
 
 1. **Erro de sintaxe no Dockerfile**: Havia um erro na sintaxe da linha que copia o arquivo `.env.example`.
 2. **Credenciais do Supabase não configuradas**: A aplicação requer as credenciais do Supabase para funcionar corretamente.
 3. **Dependência do plugin do Replit**: O código está tentando importar um pacote específico do Replit (`@replit/vite-plugin-runtime-error-modal`) que não está disponível no ambiente do EasyPanel.
+4. **Dependência do swagger-jsdoc**: O código está tentando importar o pacote `swagger-jsdoc` que não está disponível no ambiente.
 
 ## Passos para Correção
 
@@ -15,6 +16,9 @@ Edite o Dockerfile no seu repositório e faça as seguintes alterações:
 ```dockerfile
 # Adicione esta linha após a instalação do plugin do React
 RUN npm install @replit/vite-plugin-runtime-error-modal --save-dev --no-fund --no-audit || echo "Plugin do Replit não disponível, continuando sem ele..."
+
+# Adicione esta linha para instalar o swagger-jsdoc
+RUN npm install swagger-jsdoc swagger-ui-express --save
 
 # Adicione estas linhas antes da verificação do plugin React
 RUN echo "🔍 Verificando e removendo referências ao plugin do Replit..."
@@ -27,7 +31,7 @@ RUN touch .env.example drizzle.config.ts
 ```
 
 ### 2. Atualizar o Script de Inicialização
-Modifique o arquivo `easypanel-entrypoint.sh` para adicionar a seguinte verificação:
+Modifique o arquivo `easypanel-entrypoint.sh` para adicionar as seguintes verificações:
 
 ```bash
 # Verificar e remover importações do plugin do Replit
@@ -38,20 +42,53 @@ if grep -q "@replit/vite-plugin-runtime-error-modal" /app/dist/server/index.js; 
   echo "✅ Correção aplicada para o plugin do Replit."
 fi
 
-# Verificar referências ao plugin do Replit em todos os arquivos JS
-find /app/dist -type f -name "*.js" -exec grep -l "@replit/vite-plugin-runtime-error-modal" {} \; | while read file; do
-  echo "🔧 Removendo referências ao plugin do Replit em: $file"
-  sed -i 's/.*@replit\/vite-plugin-runtime-error-modal.*//g' "$file"
-  # Remover possíveis importações vazias que possam ter ficado
-  sed -i 's/import\s*{\s*}\s*from\s*['"'"'"]\([^'"'"'"]*\)['"'"'"];/\/\/ Importação removida: \1/g' "$file"
-  echo "✅ Correção aplicada"
-done
+# Verificar e lidar com o pacote swagger-jsdoc
+if grep -q "swagger-jsdoc" /app/dist/server/index.js; then
+  echo "⚠️ Detectada referência ao swagger-jsdoc no código compilado!"
+  
+  # Verificar se o pacote está instalado
+  if ! npm list swagger-jsdoc >/dev/null 2>&1; then
+    echo "🔧 Pacote swagger-jsdoc não encontrado, instalando..."
+    npm install swagger-jsdoc swagger-ui-express --save
+    
+    if [ $? -ne 0 ]; then
+      echo "⚠️ Falha ao instalar o swagger-jsdoc. Tentando solução alternativa..."
+      
+      # Fazer backup do arquivo antes de modificar
+      cp /app/dist/server/index.js /app/dist/server/index.js.bak
+      
+      # Modificar o código para tornar o swagger opcional
+      sed -i 's/import.*swagger-jsdoc.*$/\/\/ Swagger-jsdoc não disponível\nconst swaggerJsdoc = () => ({});/g' /app/dist/server/index.js
+      sed -i 's/import.*swagger-ui-express.*$/\/\/ Swagger-ui-express não disponível\nconst swaggerUi = { serve: () => (req, res, next) => next(), setup: () => (req, res, next) => next() };/g' /app/dist/server/index.js
+      
+      echo "✅ Referências ao swagger-jsdoc tratadas no código."
+    else
+      echo "✅ Pacotes swagger instalados com sucesso."
+    fi
+  else
+    echo "✅ Pacote swagger-jsdoc já está instalado."
+  fi
+fi
 ```
 
-### 3. Criar Script de Patch de Emergência
-Crie um novo arquivo `scripts/remove-replit-plugin.sh` com o script de correção de emergência fornecido. Este script pode ser executado manualmente dentro do container para remover todas as referências ao plugin do Replit dos arquivos JS compilados.
+### 3. Criar Script de Patch para o Swagger
+Crie um novo arquivo `scripts/fix-swagger-deps.js` com o código para corrigir as referências ao swagger-jsdoc no código compilado.
 
-### 4. Configurar Variáveis de Ambiente no EasyPanel
+### 4. Aplicar Patch de Emergência no Container Atual (Opção Rápida)
+Se você não quiser recriar o container, pode aplicar o patch de emergência diretamente:
+
+1. Acesse o terminal/shell do container no EasyPanel
+2. Execute os seguintes comandos:
+
+```bash
+# Instalar o swagger-jsdoc
+cd /app && npm install swagger-jsdoc swagger-ui-express --save
+
+# Reiniciar o serviço
+exec node dist/server/index.js
+```
+
+### 5. Configurar Variáveis de Ambiente no EasyPanel
 No EasyPanel, é necessário configurar as variáveis de ambiente do Supabase:
 
 1. Acesse o painel de controle do seu serviço no EasyPanel
@@ -59,36 +96,6 @@ No EasyPanel, é necessário configurar as variáveis de ambiente do Supabase:
 3. Adicione as seguintes variáveis:
    - `SUPABASE_URL`: URL do seu projeto Supabase (ex: https://seuprojeto.supabase.co)
    - `SUPABASE_SERVICE_ROLE_KEY`: Chave de serviço (service role key) do seu projeto Supabase
-
-### 5. Aplicar Patch de Emergência no Container Atual (Opção Rápida)
-Se você não quiser recriar o container, você pode aplicar o patch de emergência diretamente:
-
-1. Acesse o terminal/shell do container no EasyPanel
-2. Execute os seguintes comandos:
-
-```bash
-# Criar arquivo de patch diretamente
-cat > /app/patch-replit.sh << 'EOF'
-#!/bin/sh
-set -e
-echo "🔧 Removendo referências ao plugin do Replit..."
-SERVER_INDEX="/app/dist/server/index.js"
-[ -f "$SERVER_INDEX" ] && sed -i 's/.*@replit\/vite-plugin-runtime-error-modal.*//g' "$SERVER_INDEX"
-[ -f "$SERVER_INDEX" ] && sed -i '/import\s*{\s*}\s*from/d' "$SERVER_INDEX"
-find /app/dist -type f -name "*.js" -exec sed -i 's/.*@replit\/vite-plugin-runtime-error-modal.*//g' {} \;
-find /app/dist -type f -name "*.js" -exec sed -i '/import\s*{\s*}\s*from/d' {} \;
-echo "✅ Patch aplicado"
-EOF
-
-# Tornar o script executável
-chmod +x /app/patch-replit.sh
-
-# Executar o patch
-/app/patch-replit.sh
-
-# Reiniciar o serviço
-exec node dist/server/index.js
-```
 
 ### 6. Recriar o Container
 Após realizar as alterações no código:
@@ -102,7 +109,7 @@ Após a reconstrução, verifique se:
 
 1. O build do Docker é concluído sem erros
 2. A aplicação inicia corretamente e pode se conectar ao Supabase
-3. Não há mais erros relacionados ao plugin do Replit
+3. Não há mais erros relacionados ao plugin do Replit ou ao swagger-jsdoc
 
 ## Suporte Adicional
 Se você continuar enfrentando problemas:

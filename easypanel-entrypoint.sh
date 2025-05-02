@@ -99,6 +99,48 @@ if grep -q "@replit/vite-plugin-runtime-error-modal" /app/dist/server/index.js; 
   echo "✅ Correção aplicada para o plugin do Replit."
 fi
 
+# Verificar e lidar com o pacote swagger-jsdoc
+if grep -q "swagger-jsdoc" /app/dist/server/index.js; then
+  echo "⚠️ Detectada referência ao swagger-jsdoc no código compilado!"
+  
+  # Verificar se o pacote está instalado
+  if ! npm list swagger-jsdoc >/dev/null 2>&1; then
+    echo "🔧 Pacote swagger-jsdoc não encontrado, instalando..."
+    npm install swagger-jsdoc swagger-ui-express --save
+    
+    if [ $? -ne 0 ]; then
+      echo "⚠️ Falha ao instalar o swagger-jsdoc. Tentando solução alternativa..."
+      
+      # Fazer backup do arquivo antes de modificar
+      cp /app/dist/server/index.js /app/dist/server/index.js.bak
+      
+      # Criar script para tornar o swagger opcional
+      cat > /app/fix-swagger.js << 'EOF'
+const fs = require('fs');
+const serverIndexPath = '/app/dist/server/index.js';
+const serverCode = fs.readFileSync(serverIndexPath, 'utf8');
+
+// Tornar as importações opcionais
+const fixedCode = serverCode
+  .replace(/import\s+.*?swagger-jsdoc.*?from\s+['"]swagger-jsdoc['"];?/g, 
+    "// Swagger-jsdoc não disponível\nconst swaggerJsdoc = () => ({});")
+  .replace(/import\s+.*?swagger-ui-express.*?from\s+['"]swagger-ui-express['"];?/g,
+    "// Swagger-ui-express não disponível\nconst swaggerUi = { serve: () => (req, res, next) => next(), setup: () => (req, res, next) => next() };");
+
+fs.writeFileSync(serverIndexPath, fixedCode);
+EOF
+      
+      # Executar o script
+      node /app/fix-swagger.js
+      echo "✅ Referências ao swagger-jsdoc tratadas no código."
+    else
+      echo "✅ Pacotes swagger instalados com sucesso."
+    fi
+  else
+    echo "✅ Pacote swagger-jsdoc já está instalado."
+  fi
+fi
+
 # Verificar referências ao plugin do Replit em todos os arquivos JS
 find /app/dist -type f -name "*.js" -exec grep -l "@replit/vite-plugin-runtime-error-modal" {} \; | while read file; do
   echo "🔧 Removendo referências ao plugin do Replit em: $file"

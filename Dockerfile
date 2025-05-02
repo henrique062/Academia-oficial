@@ -15,6 +15,9 @@ RUN npm install @vitejs/plugin-react --save-dev
 # Tentar instalar o plugin do Replit como opcional (não falhar se não estiver disponível)
 RUN npm install @replit/vite-plugin-runtime-error-modal --save-dev --no-fund --no-audit || echo "Plugin do Replit não disponível, continuando sem ele..."
 
+# Instalar o swagger-jsdoc explicitamente
+RUN npm install swagger-jsdoc swagger-ui-express --save
+
 # Instalar todas as dependências (incluindo devDependencies)
 RUN npm ci
 
@@ -39,6 +42,10 @@ RUN ls -la node_modules/@vitejs/plugin-react || echo "Plugin react não encontra
 
 # Compilar o código TypeScript e os assets
 RUN NODE_ENV=production npm run build
+
+# Aplicar correções após o build para tornar o swagger opcional
+COPY scripts/fix-swagger-deps.js /build/scripts/fix-swagger-deps.js
+RUN node /build/scripts/fix-swagger-deps.js
 
 # Restaurar vitest.config.ts se foi removido
 RUN if [ -f "vitest.config.ts.bak" ]; then mv vitest.config.ts.bak vitest.config.ts; fi
