@@ -9,15 +9,6 @@ expose:
     secure: true
     metrics: true   # Habilita métricas Prometheus se disponível no EasyPanel
 
-# Configuração do banco de dados PostgreSQL gerenciado pelo EasyPanel  
-db:
-  name: tripulante-db
-  engine: postgres
-  version: "15"
-  resources:
-    cpu: 0.5     # Limite de CPU (cores)
-    memory: 1Gi  # Limite de memória
-
 # Definição dos serviços
 services:
   # Aplicação principal
@@ -29,11 +20,6 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - DATABASE_URL=postgres://postgres:${POSTGRES_PASSWORD}@${DB_HOST}:5432/tripulante
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=tripulante
-      - DB_HOST=${DB_HOST}
       # As variáveis abaixo serão substituídas apenas se estiverem definidas no EasyPanel,
       # caso contrário, serão usados os valores padrão do Dockerfile
       - SUPABASE_URL=${SUPABASE_URL:-}
@@ -55,17 +41,12 @@ services:
     # Política de reinicialização
     restart: unless-stopped
     volumes:
-      # Volume para backups de banco de dados
-      - name: backups
-        path: /app/backups
       # Volume para logs
       - name: logs
         path: /app/logs
 
 # Volumes persistentes
 volumes:
-  backups:
-    size: 1Gi
   logs:
     size: 500Mi
 

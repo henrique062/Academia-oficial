@@ -4,11 +4,20 @@ Este documento explica como configurar e usar o Supabase com este projeto quando
 
 ## Sobre o Supabase
 
-O Supabase é usado nesta aplicação para:
+O Supabase é usado nesta aplicação como o **banco de dados principal**. A aplicação depende completamente do Supabase para:
+- Armazenamento de dados de alunos e usuários
 - Autenticação de usuários
 - Armazenamento de arquivos
 - Funções em tempo real
-- Banco de dados PostgreSQL complementar (para algumas funcionalidades específicas)
+
+## Pré-requisitos
+
+Antes de implantar a aplicação, você deve:
+
+1. Ter uma conta no Supabase (https://supabase.com)
+2. Criar um projeto no Supabase
+3. Obter a URL e a chave de serviço do seu projeto
+4. Configurar as funções SQL necessárias (instruções abaixo)
 
 ## Credenciais do Supabase
 
@@ -32,6 +41,27 @@ Se você quiser atualizar ou alterar as credenciais do Supabase:
    - `SUPABASE_URL`: URL do seu projeto Supabase (ex: https://xyz.supabase.co)
    - `SUPABASE_SERVICE_ROLE_KEY`: Chave de serviço do Supabase (encontrada nas configurações de API do seu projeto Supabase)
 
+## Configurando Funções SQL no Supabase
+
+Esta aplicação requer algumas funções SQL personalizadas no Supabase. Para configurá-las:
+
+1. No seu terminal, configure as variáveis de ambiente:
+   ```bash
+   export SUPABASE_URL="sua-url-do-supabase"
+   export SUPABASE_SERVICE_ROLE_KEY="sua-chave-de-servico"
+   ```
+
+2. Execute o script de configuração:
+   ```bash
+   bash scripts/supabase/setup-supabase.sh
+   ```
+
+Alternativamente, você pode executar o SQL manualmente através do SQL Editor no painel do Supabase:
+1. Acesse o painel do seu projeto Supabase
+2. Vá para "SQL Editor"
+3. Copie e cole o conteúdo de `scripts/supabase/setup-functions.sql`
+4. Execute o SQL
+
 ## Segurança
 
 **ATENÇÃO**: As credenciais embutidas no Dockerfile são apenas para facilitar o desenvolvimento e implantação inicial. Para ambientes de produção, recomendamos fortemente:
@@ -48,17 +78,9 @@ Após implantar a aplicação, você pode verificar se o Supabase está configur
 2. Procure por mensagens como:
    - "Conectando ao Supabase: https://xyz.supabase.c..."
    - "Supabase: Configurado e ativo"
+   - "✅ Conexão com Supabase estabelecida com sucesso!"
 
-Se você ver erros relacionados ao Supabase, verifique se as credenciais estão corretas.
-
-## Criando um novo projeto Supabase
-
-Se você precisar criar um novo projeto Supabase:
-
-1. Acesse [supabase.com](https://supabase.com) e faça login
-2. Crie um novo projeto
-3. Obtenha a URL e a chave de serviço nas configurações de API
-4. Atualize as credenciais no EasyPanel (ou no Dockerfile se preferir)
+Se você ver erros relacionados ao Supabase, verifique se as credenciais estão corretas e se as funções SQL foram configuradas.
 
 ## Migrando entre projetos Supabase
 
@@ -66,5 +88,6 @@ Para migrar de um projeto Supabase para outro:
 
 1. Exporte os dados do projeto atual
 2. Importe para o novo projeto
-3. Atualize as credenciais no EasyPanel
-4. Reconstrua e reinicie a aplicação no EasyPanel 
+3. Configure as funções SQL necessárias no novo projeto
+4. Atualize as credenciais no EasyPanel
+5. Reconstrua e reinicie a aplicação no EasyPanel 

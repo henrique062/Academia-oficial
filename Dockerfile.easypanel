@@ -26,8 +26,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Instalar ferramentas necessárias em produção, incluindo wget e gnupg para testes de conectividade
-RUN apk add --no-cache postgresql-client curl wget gnupg busybox-extras 
+# Instalar ferramentas necessárias em produção (reduzidas sem PostgreSQL)
+RUN apk add --no-cache curl wget busybox-extras 
 
 # Copiar artefatos do build
 COPY --from=builder /build/dist ./dist
@@ -46,6 +46,17 @@ COPY drizzle.config.ts ./drizzle.config.ts
 
 # Ajustar permissions para scripts
 RUN find /app/scripts -type f -name "*.sh" -exec chmod +x {} \;
+
+# Criar script auxiliar para Supabase
+RUN mkdir -p /app/scripts/supabase
+RUN echo '#!/bin/sh\n\
+# Script para criar a função RPC que lista tabelas no Supabase\n\
+curl -X POST ${SUPABASE_URL}/rest/v1/rpc/get_tables \
+  -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+  -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+  -H "Content-Type: application/json" \
+  -d "{}" || echo "Falha ao testar função RPC"' > /app/scripts/supabase/test-rpc.sh
+RUN chmod +x /app/scripts/supabase/test-rpc.sh
 
 # Configurar variáveis de ambiente do Supabase diretamente
 ENV NODE_ENV=production
