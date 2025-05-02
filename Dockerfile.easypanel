@@ -26,8 +26,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Instalar somente as ferramentas necessárias em produção
-RUN apk add --no-cache postgresql-client curl
+# Instalar ferramentas necessárias em produção, incluindo wget e gnupg para testes de conectividade
+RUN apk add --no-cache postgresql-client curl wget gnupg busybox-extras 
 
 # Copiar artefatos do build
 COPY --from=builder /build/dist ./dist
@@ -44,13 +44,19 @@ RUN chmod +x ./entrypoint.sh
 COPY .env.example ./.env.example
 COPY drizzle.config.ts ./drizzle.config.ts
 
-# Para evitar problemas com scripts
+# Ajustar permissions para scripts
+RUN find /app/scripts -type f -name "*.sh" -exec chmod +x {} \;
+
+# Configurar variáveis de ambiente do Supabase diretamente
 ENV NODE_ENV=production
 ENV PORT=3000
+# Credenciais do Supabase embutidas (substitua pelos seus valores reais)
+ENV SUPABASE_URL=https://tybdysmxmxzwebaooeqj.supabase.co
+ENV SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5YmR5c214bXh6d2ViYW9vZXFqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NjA1MzU4MywiZXhwIjoyMDYxNjI5NTgzfQ.1cPee3mXQujnT28QzfLqfMg5ji2Jvi6JtdZdS9k_WyA
 
-# Verificação de saúde
+# Verificação de saúde mais robusta
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD curl -f http://localhost:3000/api/health || exit 1
+  CMD wget -q --spider http://localhost:3000/api/health || curl -f http://localhost:3000/api/health || exit 1
 
 # Expor porta
 EXPOSE 3000

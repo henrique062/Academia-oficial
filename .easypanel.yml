@@ -25,7 +25,7 @@ services:
     image: ${REGISTRY_HOST}/${REGISTRY_NAMESPACE}/tripulante-dashboard:latest
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.easypanel
     environment:
       - NODE_ENV=production
       - PORT=3000
@@ -33,9 +33,11 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=tripulante
-      # Segredos do Supabase - Atualize com suas credenciais reais
-      - SUPABASE_URL=${SUPABASE_URL}
-      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - DB_HOST=${DB_HOST}
+      # As variáveis abaixo serão substituídas apenas se estiverem definidas no EasyPanel,
+      # caso contrário, serão usados os valores padrão do Dockerfile
+      - SUPABASE_URL=${SUPABASE_URL:-}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-}
       # Configurações adicionais
       - SESSION_SECRET=${SESSION_SECRET:-change-me-in-production}
       - LOG_LEVEL=${LOG_LEVEL:-info}
