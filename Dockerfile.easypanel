@@ -9,6 +9,9 @@ RUN apk add --no-cache python3 make g++
 # Copiar arquivos de dependências primeiro (para aproveitar o cache do Docker)
 COPY package*.json ./
 
+# Instalar explicitamente o @vitejs/plugin-react primeiro para garantir que esteja disponível
+RUN npm install @vitejs/plugin-react --save-dev
+
 # Instalar todas as dependências (incluindo devDependencies)
 RUN npm ci
 
@@ -21,6 +24,10 @@ COPY . .
 # Verificar se vitest.config.ts existe e removê-lo para build de produção
 RUN if [ -f "vitest.config.ts" ]; then mv vitest.config.ts vitest.config.ts.bak; fi
 
+# Verificar se o plugin react está disponível antes de prosseguir
+RUN ls -la node_modules/@vitejs || echo "Diretório @vitejs não encontrado!"
+RUN ls -la node_modules/@vitejs/plugin-react || echo "Plugin react não encontrado!"
+
 # Compilar o código TypeScript e os assets
 RUN NODE_ENV=production npm run build
 
@@ -29,14 +36,14 @@ RUN if [ -f "vitest.config.ts.bak" ]; then mv vitest.config.ts.bak vitest.config
 
 # Verificar a estrutura do diretório após o build
 RUN ls -la dist/ || echo "Diretório dist não encontrado"
+RUN ls -la dist/public/ || echo "Diretório dist/public não encontrado"
 RUN ls -la dist/server/ || echo "Diretório dist/server não encontrado"
-RUN find . -name "index.js" | grep -v node_modules
 
 # Remover devDependencies para reduzir o tamanho da imagem final
 RUN npm prune --production
 
 # Estágio de produção
-FROM node:20-alpine
+FROM node:20-alpine AS production
 
 WORKDIR /app
 
@@ -52,9 +59,7 @@ COPY --from=builder /build/package*.json ./
 RUN ls -la
 RUN ls -la dist/ || echo "Diretório dist não encontrado"
 RUN ls -la dist/server/ || echo "Diretório dist/server não encontrado"
-
-# Copiar pasta public, se existir
-COPY --from=builder /build/public ./public || echo "Public folder not found"
+RUN ls -la dist/public/ || echo "Diretório dist/public não encontrado"
 
 # Criar diretórios para scripts
 RUN mkdir -p scripts/supabase
@@ -65,8 +70,20 @@ COPY easypanel-entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
 # Garantir que scripts de correção tenham permissão de execução
-RUN chmod +x ./scripts/easypanel-fix.sh || echo "Script de correção não encontrado, será criado no primeiro startup"
 RUN chmod +x ./scripts/fix-build.js || echo "Script de build não encontrado"
+RUN [ ! -f "./scripts/easypanel-fix.sh" ] && echo '#!/bin/sh\n\
+# Verificar e criar diretório public se não existir\n\
+if [ ! -d "/app/dist/public" ]; then\n\
+  mkdir -p /app/dist/public\n\
+  echo "Diretório public criado em /app/dist/public"\n\
+fi\n\
+# Copiar arquivos estáticos para o local correto se necessário\n\
+if [ -d "/app/dist/server/public" ] && [ ! -d "/app/dist/public" ]; then\n\
+  cp -r /app/dist/server/public/* /app/dist/public/\n\
+  echo "Arquivos copiados de dist/server/public para dist/public"\n\
+fi\n\
+echo "Script de correção para o EasyPanel executado com sucesso!"' > /app/scripts/easypanel-fix.sh || true
+RUN chmod +x ./scripts/easypanel-fix.sh || echo "Não foi possível criar script de correção"
 
 # Copiar arquivos de configuração necessários
 COPY .env.example ./.env.example || echo "Env example not found"
@@ -75,22 +92,12 @@ COPY drizzle.config.ts ./drizzle.config.ts || echo "Drizzle config not found"
 # Ajustar permissions para scripts
 RUN find /app/scripts -type f -name "*.sh" -exec chmod +x {} \;
 
-# Criar script auxiliar para Supabase
-RUN echo '#!/bin/sh\n\
-# Script para criar a função RPC que lista tabelas no Supabase\n\
-curl -X POST ${SUPABASE_URL}/rest/v1/rpc/get_tables \
-  -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
-  -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
-  -H "Content-Type: application/json" \
-  -d "{}" || echo "Falha ao testar função RPC"' > /app/scripts/supabase/test-rpc.sh
-RUN chmod +x /app/scripts/supabase/test-rpc.sh
-
 # Configurar variáveis de ambiente
 ENV NODE_ENV=production
 ENV PORT=3000
-# Credenciais do Supabase embutidas (substitua pelos seus valores reais)
-ENV SUPABASE_URL=https://tybdysmxmxzwebaooeqj.supabase.co
-ENV SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5YmR5c214bXh6d2ViYW9vZXFqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NjA1MzU4MywiZXhwIjoyMDYxNjI5NTgzfQ.1cPee3mXQujnT28QzfLqfMg5ji2Jvi6JtdZdS9k_WyA
+# As credenciais do Supabase devem ser fornecidas como variáveis de ambiente no Easypanel
+# ENV SUPABASE_URL=https://example.supabase.co
+# ENV SUPABASE_SERVICE_ROLE_KEY=your-key-here
 
 # Verificação de saúde mais robusta
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \

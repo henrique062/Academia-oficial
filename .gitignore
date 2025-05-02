@@ -1,6 +1,65 @@
-node_modules
-dist
+# Dependências
+node_modules/
+.pnp
+.pnp.js
+yarn-error.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build e produção
+/dist
+/build
+/out
+/.next
+/.nuxt
+.output
+
+# Arquivos de ambiente
+.env
+.env.*
+!.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Arquivos do sistema
 .DS_Store
+*.pem
+.idea
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs
+*.log
+
+# Arquivos temporários
 server/public
 vite.config.ts.*
 *.tar.gz
+.cache
+tmp
+temp
+
+# Coverage
+/coverage
+.nyc_output
+
+# Locks específicos para plataformas (manter apenas package-lock.json)
+yarn.lock
+pnpm-lock.yaml
+
+# Artefatos de IDE/editores
+.idea/
+.vscode/
+*.swp
+*.swo
+.history

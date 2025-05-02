@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "NODE_ENV=development tsx server/index.ts",
+    "prebuild": "node scripts/fix-vite-plugin.js",
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist/server --define:process.env.NODE_ENV=\\\"production\\\" && node scripts/fix-build.js",
     "start": "NODE_ENV=production node dist/server/index.js",
     "check": "tsc",
@@ -119,7 +120,7 @@
     "@types/ws": "^8.5.13",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",
-    "@vitejs/plugin-react": "^4.3.2",
+    "@vitejs/plugin-react": "^4.4.1",
     "autoprefixer": "^10.4.20",
     "drizzle-kit": "^0.30.4",
     "esbuild": "^0.25.0",
