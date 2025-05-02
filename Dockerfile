@@ -94,9 +94,8 @@ fi\n\
 echo "Script de correção para o EasyPanel executado com sucesso!"' > /app/scripts/easypanel-fix.sh || true
 RUN chmod +x ./scripts/easypanel-fix.sh || echo "Não foi possível criar script de correção"
 
-# Copiar arquivos de configuração necessários
-COPY .env.example ./.env.example 2>/dev/null || echo Env_example_not_found
-COPY drizzle.config.ts ./drizzle.config.ts 2>/dev/null || echo Drizzle_config_not_found
+# Criar arquivos de configuração vazios (ignorando se já existem)
+RUN touch .env.example drizzle.config.ts
 
 # Ajustar permissions para scripts
 RUN find /app/scripts -type f -name "*.sh" -exec chmod +x {} \;
