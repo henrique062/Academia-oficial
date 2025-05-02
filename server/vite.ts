@@ -38,6 +38,7 @@ export async function setupVite(app: Express, server: Server) {
     },
     server: serverOptions,
     appType: "custom",
+    root: path.join(process.cwd(), 'client'), // Updated root path
   });
 
   app.use(vite.middlewares);
@@ -73,9 +74,9 @@ export function serveStatic(app: Express) {
     path.resolve(import.meta.dirname, "..", "dist", "public"),
     path.resolve(import.meta.dirname, "public")
   ];
-  
+
   let distPath: string | null = null;
-  
+
   // Verifica cada caminho possível
   for (const checkPath of possiblePaths) {
     if (fs.existsSync(checkPath)) {
@@ -84,14 +85,14 @@ export function serveStatic(app: Express) {
       break;
     }
   }
-  
+
   // Se não encontrou em nenhum local, lança erro
   if (!distPath) {
     const errorMessage = `Não foi possível encontrar o diretório de build em nenhum dos locais esperados: 
       - ${possiblePaths[0]}
       - ${possiblePaths[1]}
     Certifique-se de que o cliente foi compilado antes de iniciar o servidor.`;
-    
+
     log(`ERRO: ${errorMessage}`);
     throw new Error(errorMessage);
   }

@@ -14,7 +14,7 @@ const loadDevPlugins = async () => {
 
 export default defineConfig(async () => {
   const devPlugins = await loadDevPlugins();
-  
+
   return {
     plugins: [
       react(),
