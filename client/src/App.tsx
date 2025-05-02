@@ -1,21 +1,22 @@
+
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { ThemeProvider } from "@/components/theme-provider";
-import Layout from "@/components/Layout";
+import { Toaster } from "./components/ui/toaster";
+import { TooltipProvider } from "./components/ui/tooltip";
+import { ThemeProvider } from "./components/theme-provider";
+import Layout from "./components/Layout";
 import { Suspense, lazy } from "react";
 import { Loader2 } from "lucide-react";
 
 // Lazy load components
-const Dashboard = lazy(() => import("@/pages/Dashboard"));
-const CadastroAluno = lazy(() => import("@/pages/CadastroAluno"));
-const Alunos = lazy(() => import("@/pages/Alunos"));
-const Integracoes = lazy(() => import("@/pages/Integracoes"));
-const Configuracoes = lazy(() => import("@/pages/Configuracoes"));
-const WebSocketDemo = lazy(() => import("@/pages/WebSocketDemo"));
-const NotFound = lazy(() => import("@/pages/not-found"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const CadastroAluno = lazy(() => import("./pages/CadastroAluno"));
+const Alunos = lazy(() => import("./pages/Alunos"));
+const Integracoes = lazy(() => import("./pages/Integracoes"));
+const Configuracoes = lazy(() => import("./pages/Configuracoes"));
+const WebSocketDemo = lazy(() => import("./pages/WebSocketDemo"));
+const NotFound = lazy(() => import("./pages/not-found"));
 
 // Componente de loading
 const LoadingFallback = () => (
