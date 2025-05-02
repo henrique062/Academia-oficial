@@ -5,14 +5,52 @@ import { z } from "zod";
 import { insertAlunoSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 import { db, supabase } from "./db";
 import { eq } from "drizzle-orm";
 import { alunos } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  const server = createServer(app);
-  const wss = new WebSocketServer({ server });
+  const httpServer = createServer(app);
+  
+  // Create WebSocket server on a distinct path
+  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  
+  // WebSocket connection handler
+  wss.on('connection', function connection(ws) {
+    console.log('WebSocket client connected');
+    
+    // Send initial message
+    ws.send(JSON.stringify({ 
+      type: 'connection', 
+      message: 'WebSocket connection established',
+      timestamp: new Date().toISOString()
+    }));
+    
+    // Handle incoming messages
+    ws.on('message', function message(data) {
+      try {
+        const parsedData = JSON.parse(data.toString());
+        console.log('Received message:', parsedData);
+        
+        // Echo the message back to client with timestamp
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({
+            type: 'echo',
+            data: parsedData,
+            timestamp: new Date().toISOString()
+          }));
+        }
+      } catch (err) {
+        console.error('Error processing WebSocket message:', err);
+      }
+    });
+    
+    // Handle connection close
+    ws.on('close', function close() {
+      console.log('WebSocket client disconnected');
+    });
+  });
   
   // Health check endpoint for Docker/EasyPanel
   app.get("/api/health", async (req, res) => {
@@ -206,5 +244,5 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
   app.use('/api', apiRouter);
 
-  return server;
+  return httpServer;
 }

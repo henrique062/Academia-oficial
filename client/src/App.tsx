@@ -14,6 +14,7 @@ const CadastroAluno = lazy(() => import("@/pages/CadastroAluno"));
 const Alunos = lazy(() => import("@/pages/Alunos"));
 const Integracoes = lazy(() => import("@/pages/Integracoes"));
 const Configuracoes = lazy(() => import("@/pages/Configuracoes"));
+const WebSocketDemo = lazy(() => import("@/pages/WebSocketDemo"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
 // Componente de loading
