@@ -23,8 +23,8 @@ RUN find . -type f -name "*.ts" -o -name "*.js" | xargs sed -i 's/.*@replit\/vit
 RUN find . -type f -name "*.ts" -o -name "*.js" | xargs sed -i '/import\s*{\s*}\s*from/d' || echo "Sem importações vazias"
 
 # Corrija as linhas de cópia de arquivos
-COPY .env.example ./.env.example 2>/dev/null || echo "Env example not found"
-COPY drizzle.config.ts ./drizzle.config.ts 2>/dev/null || echo "Drizzle config not found"
+COPY .env.example ./.env.example 2>/dev/null || echo 'Env example not found'
+COPY drizzle.config.ts ./drizzle.config.ts 2>/dev/null || echo 'Drizzle config not found'
 ```
 
 ### 2. Atualizar o Script de Inicialização
